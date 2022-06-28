@@ -16,34 +16,35 @@ def new_clothing(
     result = { 'is_valid': True, 'content': clothing }
 
     for key, value in clothing.items():
-        check_result = check_clth_field(value, key)
+        check_result = check_field(value, key)
         if not check_result['is_valid']:
             result = check_result
+            break
     return result
 
 # verify if 'value' is valid for the 'field' and returns a dict with this
 # information
-def check_clth_field(value, field):
+def check_field(value, field):
     result = { 'is_valid': False, 'err': f"'{field}' is not a Clothing key."}
     if field == 'id':
-        result = check_clth_id(value)
+        result = check_id(value)
     elif field == 'type':
-        result = check_clth_type(value)
+        result = check_type(value)
     elif field == 'sex':
-        result = check_clth_sex(value)
+        result = check_sex(value)
     elif field == 'size':
-        result = check_clth_size(value)
+        result = check_size(value)
     elif field == 'color':
-        result = check_clth_color(value)
+        result = check_color(value)
     elif field == 'purchase_date':
-        result = check_clth_purchase_date(value)
+        result = check_purchase_date(value)
     elif field == 'status':
-        result = check_clth_status(value)
+        result = check_status(value)
     elif field == 'price':
-        result = check_clth_price(value)
+        result = check_price(value)
     return result
 
-def check_clth_id(value):
+def check_id(value):
     is_valid_value = True
     err_msg = ""
     if not type(value) is int:
@@ -54,7 +55,7 @@ def check_clth_id(value):
         err_msg = 'The id must be greater than zero.'
     return { 'is_valid': is_valid_value, 'err': err_msg }
 
-def check_clth_type(value):
+def check_type(value):
     is_valid_value = True
     err_msg = ""
     if value != 'upper' and value != 'lower' and value != 'footwear':
@@ -62,7 +63,7 @@ def check_clth_type(value):
         err_msg = f"'{value}' is not a valid type."
     return { 'is_valid': is_valid_value, 'err': err_msg }
 
-def check_clth_sex(value):
+def check_sex(value):
     is_valid_value = True
     err_msg = ""
     if value != 'M' and value != 'F' and value != 'U':
@@ -70,7 +71,7 @@ def check_clth_sex(value):
         err_msg = f"'{value}' is not a valid sex."
     return { 'is_valid': is_valid_value, 'err': err_msg }
 
-def check_clth_size(value):
+def check_size(value):
     is_valid_value = True
     err_msg = ""
     if value != 'P' and value != 'M' and value != 'G':
@@ -78,7 +79,7 @@ def check_clth_size(value):
         err_msg = f"'{value}' is not a valid size."
     return { 'is_valid': is_valid_value, 'err': err_msg }
 
-def check_clth_color(value):
+def check_color(value):
     is_valid_value = True
     err_msg = ''
     if not type(value) is str:
@@ -89,7 +90,7 @@ def check_clth_color(value):
         err_msg = 'Empty color.'
     return { 'is_valid': is_valid_value, 'err': err_msg }
 
-def check_clth_purchase_date(value):
+def check_purchase_date(value):
     is_valid_value = True
     err_msg = ''
     if not type(value) is tuple:
@@ -110,7 +111,7 @@ def check_clth_purchase_date(value):
         err_msg = f"'{value[2]}' is not a valid year."
     return { 'is_valid': is_valid_value, 'err': err_msg }
 
-def check_clth_status(value):
+def check_status(value):
     is_valid_value = True
     err_msg = ''
     if value != 'sale' and value != 'donation' and value != 'keep':
@@ -118,7 +119,7 @@ def check_clth_status(value):
         err_msg = f"'{value}' is not a valid status."
     return { 'is_valid': is_valid_value, 'err': err_msg }
 
-def check_clth_price(value):
+def check_price(value):
     is_valid_value = True
     err_msg = ''
     if not type(value) is int:
@@ -128,3 +129,6 @@ def check_clth_price(value):
         is_valid_value = False
         err_msg = 'The price must be a not negative number.'
     return { 'is_valid': is_valid_value, 'err': err_msg }
+
+def request_id(clothes_list):
+    return len(clothes_list) + 1

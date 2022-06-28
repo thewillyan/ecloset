@@ -1,26 +1,39 @@
-from cli import menu,read_clothing
+import cli
 
-def add_clothing(clothes_list = []):
-    free_id = request_id(clothes_list)
-    new_clothing = read_clothing(free_id)
-    clothes_list.append(new_clothing)
-    return clothes_list
+clothes = []
+styles = []
 
-def request_id(clothes_list):
-    return len(clothes_list) + 1
+# default clothes for test purposes
+clothes = [{'id': 1, 'type': 'upper', 'sex': 'M', 'size': 'P', 'color': 'blue',
+           'purchase_date': (20, 2, 2022), 'status': 'donation', 'price': 0},
+          {'id': 2, 'type': 'lower', 'sex': 'M', 'size': 'P', 'color': 'red',
+           'purchase_date': (20, 2, 2022), 'status': 'donation', 'price': 0},
+          {'id': 3, 'type': 'footwear', 'sex': 'M', 'size': 'P', 'color': 'black',
+           'purchase_date': (20, 2, 2022), 'status': 'donation', 'price': 0},
+          {'id': 4, 'type': 'lower', 'sex': 'F', 'size': 'M', 'color': 'orange',
+           'purchase_date': (20, 2, 2022), 'status': 'keep', 'price': 0}]
 
-clothes_list = []
-main_menu_options = {
-    'a': 'add a clothing',
-    'q': 'quit'
-}
+def main_menu():
+    main_menu_options = {
+        'c': 'clothing options',
+        's': 'style options',
+        'q': 'quit'
+    }
+    cli.print_menu(main_menu_options)
+    selected_opt = cli.sel_menu_opt(main_menu_options)
+    return selected_opt
 
 while(True):
-    selected_option = menu(main_menu_options)
-    if selected_option == 'a':
-        clothes_list = add_clothing(clothes_list)
-        print("Added successfully!")
-    elif selected_option == 'q':
+    print("")
+    selected_opt = main_menu()
+    if selected_opt == 'c':
+        clothes = cli.update_clothes(clothes)
+    elif selected_opt == 's':
+        style_list = cli.update_styles(styles, clothes)
+    elif selected_opt == 'q':
         break
 
-print(clothes_list)
+print('')
+print('stored clothes:', clothes)
+print('')
+print('stored styles:', styles)
