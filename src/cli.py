@@ -49,11 +49,12 @@ def read_clothing(clth_id):
     else:
         clth_price = 0
 
-    result = clothing.new_clothing(clth_id = clth_id, clth_type = clth_type,
-                          clth_size = clth_size, clth_status = clth_status,
-                          clth_purchase_date = clth_purchase_date,
-                          clth_color = clth_color, clth_price = clth_price,
-                          clth_sex = clth_sex)
+    result = clothing.new_clothing(
+        clth_id            = clth_id,           clth_type   = clth_type,
+        clth_size          = clth_size,         clth_status = clth_status,
+        clth_purchase_date = clth_purchase_date,
+        clth_color         = clth_color,        clth_price  = clth_price,
+        clth_sex           = clth_sex)
 
     if not result['is_valid']:
         print('here')
@@ -104,7 +105,7 @@ def read_clth_color():
         clth_color = read_clth_color()
     return clth_color
 
-def read_clth_purchase_date():
+def read_clth_purchase_date(): #Explicar para o Enzo 
     try:
         clth_purchase_day = int(input("Enter the purchase day: "))
         clth_purchase_month = int(input("Enter the purchase month: "))
