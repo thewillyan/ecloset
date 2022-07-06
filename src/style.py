@@ -1,4 +1,6 @@
-# try to create a valid style and returns a dict with this information
+# try to create a valid style and returns a dict with 
+# is_valid and content (if is_valid is True) or
+# is_valid and error (if is_valid is False)
 def new_style(style_name,clothes_sets = []):
     style = {
         'name': style_name,
@@ -17,7 +19,9 @@ def new_style(style_name,clothes_sets = []):
                 result = check_result
     return result
 
-# try to create a valid clothing set and returns a dict with this information
+# try to create a valid clothing set and returns a dict with 
+# is_valid and content (if is_valid is True) or
+# is_valid and error (if is_valid is False)
 def new_clth_set(clth1, clth2, clth3):
     clth_set = [ clth1, clth2, clth3 ]
     if can_make_set(clth_set):
@@ -40,7 +44,8 @@ def new_clth_set(clth1, clth2, clth3):
         result = check_result
     return result
 
-# check if 'clothes' is a valid 'clothes set'
+# verify if 'clothes' is a valid clothing set and returns a dict with
+# is_valid and arror (if any)
 def check_clothes_set(clothes):
     is_valid = True
     err_msg = ""

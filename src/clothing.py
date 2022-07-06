@@ -1,4 +1,6 @@
-# try to create a valid clothing and returns a dict with this information
+# try to create a valid clothing and returns a dict with 
+# is_valid and content (if is_valid is True) or
+# is_valid and error (if is_valid is False)
 def new_clothing(
     clth_id, clth_type, clth_sex, clth_size, clth_color,
     clth_purchase_date, clth_status, clth_price = 0
@@ -22,8 +24,8 @@ def new_clothing(
             break
     return result
 
-# verify if 'value' is valid for the 'field' and returns a dict with this
-# information
+# verify if 'value' is valid for the 'field' and returns a dict with
+# is_valid and arror (if any)
 def check_field(value, field):
     result = { 'is_valid': False, 'err': f"'{field}' is not a Clothing key."}
     if field == 'id':
@@ -130,5 +132,6 @@ def check_price(value):
         err_msg = 'The price must be a not negative number.'
     return { 'is_valid': is_valid_value, 'err': err_msg }
 
+# return a new valid clothing id
 def request_id(clothes_list):
     return len(clothes_list) + 1

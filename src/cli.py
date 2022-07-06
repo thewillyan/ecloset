@@ -15,6 +15,7 @@ def sel_menu_opt(menu_options, msg="Select an option: "):
         selected_opt = sel_menu_opt(menu_options)
     return selected_opt
 
+# shows the clothing menu and returns the option selected by the user
 def clothing_menu():
     clth_menu_options = {
         'a': 'add clothing',
@@ -25,6 +26,7 @@ def clothing_menu():
     selected_opt = sel_menu_opt(clth_menu_options)
     return selected_opt
 
+# shows the style menu and returns the option selected by the user
 def style_menu():
     style_menu_options = {
         'n': 'create a new style',
@@ -35,7 +37,7 @@ def style_menu():
     selected_opt = sel_menu_opt(style_menu_options)
     return selected_opt
 
-# create a new clothing based on user input
+# create a new clothing based on user input, return a new clothing
 def read_clothing(clth_id):
     clth_type = read_clth_type()
     clth_sex = read_clth_sex()
@@ -64,7 +66,7 @@ def read_clothing(clth_id):
         result = result['content']
     return result
 
-
+# asks the user to select a type and return the selected one
 def read_clth_type():
     clth_type_menu = { 
         'u': "upper",
@@ -76,6 +78,7 @@ def read_clth_type():
     clth_type = clth_type_menu[selected_opt]
     return clth_type
 
+# asks the user to select a sex and return the selected one
 def read_clth_sex():
     clth_sex_menu = {
         'm': "male",
@@ -87,6 +90,7 @@ def read_clth_sex():
     clth_sex = selected_opt.upper()
     return clth_sex
 
+# asks the user to select a size and return the selected one
 def read_clth_size():
     clth_size_menu = {
         'p': "p size",
@@ -98,6 +102,7 @@ def read_clth_size():
     clth_size = selected_opt.upper()
     return clth_size
 
+# asks the user to select a color and return the selected one
 def read_clth_color():
     clth_color = input("Enter the clothing main color: ")
     if clth_color == "":
@@ -105,6 +110,7 @@ def read_clth_color():
         clth_color = read_clth_color()
     return clth_color
 
+# asks the user to select a purcharse date and return the selected one
 def read_clth_purchase_date(): #Explicar para o Enzo 
     try:
         clth_purchase_day = int(input("Enter the purchase day: "))
@@ -116,6 +122,7 @@ def read_clth_purchase_date(): #Explicar para o Enzo
         date = read_clth_purchase_date()
     return date
 
+# asks the user to select a status and return the selected one
 def read_clth_status():
     clth_status_menu = {
         'd': "donation",
@@ -127,6 +134,7 @@ def read_clth_status():
     clth_status = clth_status_menu[selected_opt]
     return clth_status
 
+# asks the user to select a price and return the selected one
 def read_clth_price():
     try:
         clth_price = float(input("Enter selling price: "))
@@ -162,12 +170,14 @@ def select_clth(clothes):
             print("Invalid input!")
     return result
 
+# prints all clothes from 'clothes'
 def print_clothes(clothes):
     for clth in clothes:
         print("-" * 30)
         print_clothing(clth)
         print("-" * 30)
 
+# prints a clothing
 def print_clothing(clth):
     for key,value in clth.items():
         if key == 'sex':
@@ -191,6 +201,8 @@ def print_clothing(clth):
             clth_data = str(value).capitalize()
             print(f"{clth_field}: {clth_data}")
 
+# asks the user to select a valid clothing set, return the selected one
+# if is impossible to make a clothing set it returns None
 def select_clth_set(clothes):
     result = None
     if style.can_make_set(clothes):
@@ -210,6 +222,7 @@ def select_clth_set(clothes):
         print("You can't make any clothing set yet.")
     return result
 
+# creates a new style based on user input
 def read_style():
     style_name = input("Enter the style name: ")
     if style_name == "":
@@ -218,6 +231,8 @@ def read_style():
     result = style.new_style(style_name)['content']
     return result
 
+# ask for the user to select one of the given styles, return the selected one
+# if index=True it returns a dict with the selected one and its index
 def select_style(styles, index=False):
     if len(styles) == 0:
         print("You have no style stored.")
@@ -239,6 +254,7 @@ def select_style(styles, index=False):
         else:
             return selected
 
+# read the user input to modify a given clothing list, return the modified list
 def update_clothes(clothes = []):
     while(True):
         print("")
@@ -252,6 +268,7 @@ def update_clothes(clothes = []):
             break
     return clothes
 
+# read the user input to modify a given style list, return the modified list
 def update_styles(styles = [], clothes = []):
     while(True):
         print("")
@@ -277,6 +294,7 @@ def update_styles(styles = [], clothes = []):
             break
     return styles
 
+# read new clothing from the user and add it to a clothing list
 def add_clothing(clothes = []):
     free_id = clothing.request_id(clothes)
     new_clothing = read_clothing(free_id)
