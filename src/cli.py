@@ -33,6 +33,8 @@ def clothing_menu():
 def style_menu():
     style_menu_options = {
         'n': 'create a new style',
+        'l': 'list all styles',
+        'c': 'list clothes of a style',
         'a': 'add clothes to style',
         'b': 'back'
     }
@@ -183,26 +185,51 @@ def print_clothes(clothes):
 # prints a clothing
 def print_clothing(clth):
     for key,value in clth.items():
+        clth_field = str(key).capitalize()
+        clth_data = str(value).capitalize()
         if key == 'sex':
             if value == "M":
-                sex = "Male"
+                clth_data = "Male"
             elif value == "F":
-                sex = "Female"
+                clth_data = "Female"
             elif value == "U":
-                sex = "Unisex"
-            print(f"Sex: {sex}")
+                clth_data = "Unisex"
         elif key == 'purchase_date':
-            formated_date = f"{value[0]:02d}/{value[1]:02d}/{value[2]:04d}"
-            print(f"Purchase date: {formated_date}")
+            clth_field = "Purchase date"
+            clth_data = f"{value[0]:02d}/{value[1]:02d}/{value[2]:04d}"
         elif key == 'status':
-            print(f"Status: For {value}")
+            clth_data = f"For {value}"
         elif key == 'price':
             if value > 0:
-                print(f"Price: ${float(value/100):.2f}")
-        else:
-            clth_field = str(key).capitalize()
-            clth_data = str(value).capitalize()
-            print(f"{clth_field}: {clth_data}")
+                clth_data = f"${float(value/100):.2f}"
+            else:
+                continue
+        print(f"{clth_field}: {clth_data}")
+
+# prints a style
+def print_style(style):
+    for key,value in style.items():
+        style_field = str(key).capitalize()
+        style_data = str(value).capitalize()
+        if key == 'clothes_sets':
+            style_field = "Clothes sets"
+            style_data = len(value)
+        print(f"{style_field}: {style_data}")
+
+# prints all styles from 'styles'
+def print_styles(styles):
+    for style in styles:
+        print('-' * 30)
+        print_style(style)
+        print('-' * 30)
+
+# prints all clothes_sets from 'clth_sets'
+def print_clth_sets(clth_sets):
+    for i, clothes in enumerate(clth_sets):
+        print('-=' * 15)
+        print(f"-> Outfit {i+1}")
+        print_clothes(clothes)
+        print('-=' * 15)
 
 # asks the user to select a valid clothing set, return the selected one
 # if is impossible to make a clothing set it returns None
@@ -239,6 +266,10 @@ def read_style():
 def select_style(styles, index=False):
     if len(styles) == 0:
         print("You have no style stored.")
+        if index:
+            return None, None
+        else:
+            return None
     else:
         # make a style menu where a number is the option and the value
         # is the style name
@@ -253,7 +284,7 @@ def select_style(styles, index=False):
         selected_index = int(selected_opt) - 1
         selected = styles[selected_index]
         if index:
-            return { 'index': selected_index, 'style': selected }
+            return selected, selected_index
         else:
             return selected
 
@@ -289,8 +320,15 @@ def update_styles(styles = [], clothes = []):
             style = read_style()
             styles.append(style)
             print(f"Style '{style['name']}' was created!")
+        elif selected_opt == 'l':
+            print_styles(styles)
+        elif selected_opt == 'c':
+            style, index = select_style(styles, index=True)
+            if not style is None:
+                styles[index]['count'] += 1
+                print_clth_sets(style['clothes_sets'])
         elif selected_opt == 'a':
-            style = select_style(styles, index=True)
+            style, index = select_style(styles, index=True)
             # if is not a valid style, show the style menu again
             if style is None:
                 continue
@@ -299,7 +337,6 @@ def update_styles(styles = [], clothes = []):
             # if is not a valid clothing set, show the style menu again
             if clth_set is None:
                 continue
-            index = style['index']
             styles[index]['clothes_sets'].append(clth_set)
             print("Added successfully!")
         elif selected_opt == 'b':
