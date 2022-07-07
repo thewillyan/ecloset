@@ -20,6 +20,9 @@ def clothing_menu():
     clth_menu_options = {
         'a': 'add clothing',
         'l': 'list all clothes',
+        'y': 'clothes for you',
+        's': 'clothes for sale',
+        'd': 'clothes for donation',
         'b': 'back'
     }
     print_menu(clth_menu_options)
@@ -264,6 +267,15 @@ def update_clothes(clothes = []):
             print("Added successfully!")
         elif selected_opt == 'l':
             print_clothes(clothes)
+        elif selected_opt == 'y':
+            interest_clothes = clothing.filter_by_interest(clothes)
+            print_clothes(interest_clothes)
+        elif selected_opt == 's':
+            for_sale = clothing.filter('status', 'sale', clothes)
+            print_clothes(for_sale)
+        elif selected_opt == 'd':
+            for_donation = clothing.filter('status', 'donation', clothes)
+            print_clothes(for_donation)
         elif selected_opt == 'b':
             break
     return clothes

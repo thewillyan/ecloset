@@ -135,3 +135,63 @@ def check_price(value):
 # return a new valid clothing id
 def request_id(clothes_list):
     return len(clothes_list) + 1
+
+# returns list of clothes where the 'field' matches the 'value'
+def filter(field, value, clothes):
+    result = []
+    for clth in clothes:
+        if clth[field] == value:
+            result.append(clth)
+    return result
+
+# returns the compatibility score between 'clth1' and 'clth2'
+def match_score(clth1, clth2):
+    comparison_keys = ['type', 'sex', 'size', 'color']
+    score = 0
+    for key in comparison_keys:
+        if clth1[key] == clth2[key]:
+            score += 1
+    return score
+
+# returns a clothing with the most common attributes of 'clothes'
+def ideal(clothes):
+    result = {}
+    for key in clothes[0].keys():
+        result[key] = common_value(clothes, key)
+    return result
+
+# returns the most common value of 'key' in 'clothes'
+def common_value(clothes, key):
+    value_tree = {}
+    for clth in clothes:
+        value = clth[key]
+        if value in value_tree:
+            value_tree[value] += 1
+        else:
+            value_tree[value] = 1
+
+    result = clothes[0][key]
+    for key, value in value_tree.items():
+        if value > value_tree[result]:
+            result = key
+    return result
+
+# sort 'clothes' by che compatibility with 'comp_clth'
+def sort_by_score(clothes, comp_clth):
+    scores = []
+    for i in range( len(clothes) ):
+        score = match_score(clothes[i], comp_clth)
+        scores.append([score, i])
+    scores.sort(reverse=True)
+
+    result = []
+    for score in scores:
+        clth = clothes[score[1]]
+        result.append(clth)
+    return result
+
+# filter 'clothes' by the user interest
+def filter_by_interest(clothes):
+    ideal_clth = ideal(clothes)
+    result = sort_by_score(clothes, ideal_clth)
+    return result
