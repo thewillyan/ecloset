@@ -37,9 +37,9 @@ def check_field(value, field):
         result = check_sex(value)
     elif field == 'size':
         result = check_size(value)
-    elif field == 'color':
-        result = check_color(value)
-    elif field == 'purchase_date':
+    elif field == 'color' or field == 'agent':
+        result = check_not_empty(value, field)
+    elif field == 'purchase_date' or field == 'resolved_date':
         result = check_date(value)
     elif field == 'status':
         result = check_status(value)
@@ -84,15 +84,15 @@ def check_size(value):
         err_msg = f"'{value}' is not a valid size."
     return { 'is_valid': is_valid_value, 'err': err_msg }
 
-def check_color(value):
+def check_not_empty(value, field):
     is_valid_value = True
     err_msg = ''
     if not type(value) is str:
         is_valid_value = False
-        err_msg = f"'{value}' is not a valid color, it must be a string."
+        err_msg = f"'{value}' is not a valid {field}, it must be a string."
     elif value == '':
         is_valid_value = False
-        err_msg = 'Empty color.'
+        err_msg = f"Empty {field}."
     return { 'is_valid': is_valid_value, 'err': err_msg }
 
 def check_date(value):
@@ -207,18 +207,38 @@ def filter_by_interest(clothes):
     result = sort_by_score(clothes, ideal_clth)
     return result
 
-# returns a sold clothing
+# try to create a valid sold clothing and returns a dict with 
+# is_valid and content (if is_valid is True) or
+# is_valid and error (if is_valid is False)
+def new_sold_clth(
+    clth_id, clth_type, clth_sex, clth_size, clth_color,
+    clth_sold_date, clth_price, clth_buyer
+):
+    clothing = {
+        'id': clth_id,
+        'type': clth_type,
+        'sex': clth_sex,
+        'size': clth_size,
+        'color': clth_color,
+        'resolved_date': clth_sold_date,
+        'price': clth_price,
+        'agent': clth_buyer
+    }
+    result = { 'is_valid': True, 'content': clothing }
+
+    for key, value in clothing.items():
+        check_result = check_field(value, key)
+        if not check_result['is_valid']:
+            result = check_result
+            break
+    return result
+
+# transform 'clth' in a sold clothing, returns a sold clothing
 def sell(clth, sold_date, buyer):
+    result = new_sold_clth( clth['id'], clth['type'], clth['sex'], clth['size'],
+                            clth['color'], sold_date, clth['price'], buyer )
     if clth['status'] != 'sale':
         raise Exception("Can't sell a clothing that is not for sale")
-    result = {
-        'id':  clth['id'],
-        'type': clth['type'],
-        'sex': clth['sex'],
-        'size': clth['size'],
-        'color': clth['color'],
-        'resolved_date': sold_date,
-        'price': clth['price'],
-        'agent': buyer
-    }
-    return result
+    elif not result['is_valid']:
+        raise Exception(f"Error: {result['err']}")
+    return result['content']
