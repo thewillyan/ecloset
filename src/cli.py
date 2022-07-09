@@ -381,6 +381,10 @@ def update_styles(styles = [], clothes = []):
             # if is not a valid clothing set, show the style menu again
             if clth_set is None:
                 continue
+            elif clth_set in styles[index]['clothes_sets']:
+                print(f"This outfit is already in {style_name}.")
+                continue
+
             styles[index]['clothes_sets'].append(clth_set)
 
             for clth in style.get_clothes(clth_set, clothes):
