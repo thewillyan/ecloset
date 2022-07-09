@@ -2,6 +2,7 @@ import cli
 
 clothes = []
 sold_clothes = []
+donated_clothes = []
 styles = []
 
 # default clothes for test purposes
@@ -29,6 +30,7 @@ def main_menu():
         'c': 'clothing options',
         's': 'style options',
         'e': 'sell a clothing',
+        'd': 'donate a clothing',
         'q': 'quit'
     }
     cli.print_menu(main_menu_options)
@@ -46,6 +48,9 @@ while(True):
     elif selected_opt == 'e':
         clothes, sold_clothes, styles = cli.update_sold(clothes, sold_clothes,
                                                         styles)
+    elif selected_opt == 'd':
+        clothes, donated_clothes, styles = cli.update_donated(clothes, donated_clothes,
+                                                              styles)
     elif selected_opt == 'q':
         break
 
@@ -53,5 +58,7 @@ print('')
 print('stored clothes:', clothes)
 print('')
 print('sold clothes:', sold_clothes)
+print('')
+print('donated clothes:', donated_clothes)
 print('')
 print('stored styles:', styles)

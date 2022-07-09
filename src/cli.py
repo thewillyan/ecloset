@@ -42,15 +42,15 @@ def style_menu():
     selected_opt = sel_menu_opt(style_menu_options)
     return selected_opt
 
-# shows the sell menu and returns the option selected by the user
-def sell_menu():
-    sell_menu_options = {
+# shows the menu and returns the option selected by the user
+def select_clth_menu():
+    select_menu_options = {
         'c': 'select clothing',
         's': 'select by style',
         'b': 'back'
     }
-    print_menu(sell_menu_options)
-    selected_opt = sel_menu_opt(sell_menu_options)
+    print_menu(select_menu_options)
+    selected_opt = sel_menu_opt(select_menu_options)
     return selected_opt
 
 # shows the conifirm menu and returns the option selected by the user
@@ -408,7 +408,7 @@ def sell_clth(clth, clothes, sold_clothes):
 def update_sold(clothes, sold_clothes, styles):
     while(True):
         print("")
-        selected_opt = sell_menu()
+        selected_opt = select_clth_menu()
         if selected_opt == 'c':
             for_sale = clothing.filter('status', 'sale', clothes)
             print_clothes(for_sale)
@@ -441,6 +441,55 @@ def update_sold(clothes, sold_clothes, styles):
             break
 
     return clothes, sold_clothes, styles
+
+# sell 'clth' based on user input, returns the clothes and sold list
+def donate_clth(clth, clothes, donated_clothes):
+    donation_date = read_date("Date of donation.")
+    agent = read_not_empty("Enter the donation target", 'target')
+    donated_clth = clothing.donate(clth, donation_date, agent)
+    donated_clothes.append(donated_clth)
+    clothes.remove(clth)
+    print(f"Clothing {clth['id']} was successfully donated!")
+    return clothes, donated_clothes
+
+# read the user input to modify the donated_clothes, changing clothes and styles
+# list as a side effect, returns clothes, donated clothes and styles lists
+def update_donated(clothes, donated_clths, styles):
+    while(True):
+        print("")
+        selected_opt = select_clth_menu()
+        if selected_opt == 'c':
+            for_donation = clothing.filter('status', 'donation', clothes)
+            print_clothes(for_donation)
+            clth = select_clth(for_donation)
+            clothes, donated_clths = donate_clth(clth, clothes, donated_clths)
+            styles = style.remove_clth(clth, styles)
+        elif selected_opt == 's':
+            clth_style, index = select_style(styles, index=True)
+            if clth_style is None:
+                continue
+            print_clth_sets(clth_style['clothes_sets'], clothes)
+            confirm = confirm_menu()
+            if confirm == 'n':
+                continue
+            clth_sets = clth_style['clothes_sets']
+            print_clth_sets(clth_sets, clothes)
+            clth_set = select_clth_set(clth_sets)
+            if clth_set is None:
+                continue
+            clths = style.get_clothes(clth_set, clothes)
+            for_donation = clothing.filter('status', 'donation', clths)
+            print_clothes(for_donation)
+            clth = select_clth(for_donation)
+            if clth is None:
+                continue
+            clothes, donated_clths = donate_clth(clth, clothes, donated_clths)
+            styles[index]['count'] += 1
+            styles = style.remove_clth(clth, styles)
+        elif selected_opt == 'b':
+            break
+
+    return clothes, donated_clths, styles
 
 # read new clothing from the user and add it to a clothing list
 def add_clothing(clothes = []):

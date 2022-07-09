@@ -242,3 +242,39 @@ def sell(clth, sold_date, buyer):
     elif not result['is_valid']:
         raise Exception(f"Error: {result['err']}")
     return result['content']
+
+
+# try to create a valid donated clothing and returns a dict with 
+# is_valid and content (if is_valid is True) or
+# is_valid and error (if is_valid is False)
+def new_donated_clth(
+    clth_id, clth_type, clth_sex, clth_size, clth_color,
+    clth_sold_date, clth_agent
+):
+    clothing = {
+        'id': clth_id,
+        'type': clth_type,
+        'sex': clth_sex,
+        'size': clth_size,
+        'color': clth_color,
+        'resolved_date': clth_sold_date,
+        'agent': clth_agent
+    }
+    result = { 'is_valid': True, 'content': clothing }
+
+    for key, value in clothing.items():
+        check_result = check_field(value, key)
+        if not check_result['is_valid']:
+            result = check_result
+            break
+    return result
+
+# transform 'clth' in a donated clothing, returns a donated clothing
+def donate(clth, donation_date, agent):
+    result = new_donated_clth( clth['id'], clth['type'], clth['sex'], clth['size'],
+                            clth['color'], donation_date, agent )
+    if clth['status'] != 'donation':
+        raise Exception("Can't donate a clothing that is not for donation")
+    elif not result['is_valid']:
+        raise Exception(f"Error: {result['err']}")
+    return result['content']
