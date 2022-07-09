@@ -1,7 +1,7 @@
 # try to create a valid style and returns a dict with 
 # is_valid and content (if is_valid is True) or
 # is_valid and error (if is_valid is False)
-def new_style(style_name,clothes_sets = []):
+def new_style(style_name, clothes_sets):
     style = {
         'name': style_name,
         'count': 0,
@@ -87,3 +87,24 @@ def can_make_set(clothes):
             result = True
             break
     return result
+
+# returns a list with all styles where 'clth' appears
+def get_styles(clth, styles):
+    result = []
+    for style in styles:
+        for clth_set in style['clothes_sets']:
+            if clth in clth_set:
+                result.append(style['name'])
+                break
+    return result
+
+# retuns a style where all clothing sets where 'clth' appears are removed
+def remove_clth(clth, styles):
+    for i in range( len(styles) ):
+        style = styles[i]
+        new_clth_sets = style['clothes_sets'].copy()
+        for clth_set in style['clothes_sets']:
+            if clth in clth_set:
+                new_clth_sets.remove(clth_set)
+        styles[i]['clothes_sets'] = new_clth_sets
+    return styles

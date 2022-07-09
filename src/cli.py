@@ -42,13 +42,35 @@ def style_menu():
     selected_opt = sel_menu_opt(style_menu_options)
     return selected_opt
 
+# shows the sell menu and returns the option selected by the user
+def sell_menu():
+    sell_menu_options = {
+        'c': 'select clothing',
+        's': 'select by style',
+        'b': 'back'
+    }
+    print_menu(sell_menu_options)
+    selected_opt = sel_menu_opt(sell_menu_options)
+    return selected_opt
+
+# shows the conifirm menu and returns the option selected by the user
+def confirm_menu():
+    confirm_menu_options = {
+        'y': 'yes',
+        'n': 'no'
+    }
+    print("Are you sure of your choice?")
+    print_menu(confirm_menu_options)
+    selected_opt = sel_menu_opt(confirm_menu_options)
+    return selected_opt
+
 # create a new clothing based on user input, return a new clothing
 def read_clothing(clth_id):
     clth_type = read_clth_type()
     clth_sex = read_clth_sex()
     clth_size = read_clth_size()
-    clth_purchase_date = read_clth_purchase_date()
-    clth_color = read_clth_color()
+    clth_purchase_date = read_date("Date of purchase.")
+    clth_color = read_not_empty('Enter the clothing main color', 'color')
     clth_status = read_clth_status()
 
     if clth_status == 'sale':
@@ -107,24 +129,29 @@ def read_clth_size():
     clth_size = selected_opt.upper()
     return clth_size
 
-# asks the user to select a color and return the selected one
-def read_clth_color():
-    clth_color = input("Enter the clothing main color: ")
-    if clth_color == "":
-        print("Invalid color!")
-        clth_color = read_clth_color()
-    return clth_color
+# asks the user to enter a string and returns a non-empty string
+def read_not_empty(msg, field='input'):
+    result = input(f"{msg}: ")
+    if result == "":
+        print(f"Invalid {field}!")
+        result = read_not_empty(msg, field)
+    return result
 
 # asks the user to select a purcharse date and return the selected one
-def read_clth_purchase_date(): #Explicar para o Enzo 
+def read_date(msg=""):
+    if msg != "":
+        print(msg)
     try:
-        clth_purchase_day = int(input("Enter the purchase day: "))
-        clth_purchase_month = int(input("Enter the purchase month: "))
-        clth_purchase_year = int(input("Enter the purchase year: "))
-        date = (clth_purchase_day, clth_purchase_month, clth_purchase_year)
+        day = int(input("Enter the day: "))
+        month = int(input("Enter the month: "))
+        year = int(input("Enter the year: "))
+        date = (day, month, year)
+        check_result = clothing.check_date(date)
+        if not check_result['is_valid']:
+            raise Exception(check_result['err'])
     except:
         print("Invalid date!")
-        date = read_clth_purchase_date()
+        date = read_date()
     return date
 
 # asks the user to select a status and return the selected one
@@ -160,19 +187,18 @@ def select_clth(clothes):
         print("Error: No clothes to choose from")
     else:
         try:
-            selected = int(input("Select a clothing Id: "))
             found_id = False
+            selected = int(input("Select a clothing Id: "))
             for clth in clothes:
                 if clth['id'] == selected:
                     found_id = True
                     result = clth
                     break
             if not found_id:
-                raise Exception("Invalid Id")
-        except Exception as err:
-            print(f"Error: {err}")
+                raise Exception("Not found")
         except:
-            print("Invalid input!")
+            print("Invalid Id!")
+            result = select_clth(clothes)
     return result
 
 # prints all clothes from 'clothes'
@@ -233,7 +259,7 @@ def print_clth_sets(clth_sets):
 
 # asks the user to select a valid clothing set, return the selected one
 # if is impossible to make a clothing set it returns None
-def select_clth_set(clothes):
+def read_clth_set(clothes):
     result = None
     if style.can_make_set(clothes):
         selected_clothes = []
@@ -247,19 +273,16 @@ def select_clth_set(clothes):
         else:
             print("")
             print(f"Error: {clth_set['err']}")
-            result = select_clth_set(clothes)
+            result = read_clth_set(clothes)
     else:
         print("You can't make any clothing set yet.")
     return result
 
 # creates a new style based on user input
 def read_style():
-    style_name = input("Enter the style name: ")
-    if style_name == "":
-        print("Invalid name!")
-        style_name = read_style()
-    result = style.new_style(style_name)['content']
-    return result
+    style_name = read_not_empty("Enter the style name", 'name')
+    result = style.new_style(style_name,[])
+    return result['content']
 
 # ask for the user to select one of the given styles, return the selected one
 # if index=True it returns a dict with the selected one and its index
@@ -287,6 +310,22 @@ def select_style(styles, index=False):
             return selected, selected_index
         else:
             return selected
+
+# asks the user to select a clothing set in 'clth_sets' and returns the 
+# selcted one
+def select_clth_set(clth_sets):
+    result = None
+    if len(clth_sets) == 0:
+        print("No clothing set to choose!")
+    else:
+        try:
+            index = int(input("Select a outfit number: ")) - 1
+            result = clth_sets[index]
+            return result
+        except:
+            print("Invalid outfit number!")
+            result = select_clth_set(clth_sets)
+    return result
 
 # read the user input to modify a given clothing list, return the modified list
 def update_clothes(clothes = []):
@@ -317,15 +356,14 @@ def update_styles(styles = [], clothes = []):
         print("")
         selected_opt = style_menu()
         if selected_opt == 'n':
-            style = read_style()
-            styles.append(style)
-            print(f"Style '{style['name']}' was created!")
+            clth_style = read_style()
+            styles.append(clth_style)
+            print(f"Style '{clth_style['name']}' was created!")
         elif selected_opt == 'l':
             print_styles(styles)
         elif selected_opt == 'c':
             style, index = select_style(styles, index=True)
             if not style is None:
-                styles[index]['count'] += 1
                 print_clth_sets(style['clothes_sets'])
         elif selected_opt == 'a':
             style, index = select_style(styles, index=True)
@@ -333,7 +371,7 @@ def update_styles(styles = [], clothes = []):
             if style is None:
                 continue
             print_clothes(clothes)
-            clth_set = select_clth_set(clothes)
+            clth_set = read_clth_set(clothes)
             # if is not a valid clothing set, show the style menu again
             if clth_set is None:
                 continue
@@ -342,6 +380,54 @@ def update_styles(styles = [], clothes = []):
         elif selected_opt == 'b':
             break
     return styles
+
+# sell 'clth' based on user input, returns the clothes and sold list
+def sell_clth(clth, clothes, sold_clothes):
+    sold_date = read_date("Date of sale.")
+    buyer = read_not_empty("Enter the buyer name", 'name')
+    sold_clth = clothing.sell(clth, sold_date, buyer)
+    sold_clothes.append(sold_clth)
+    clothes.remove(clth)
+    print(f"Clothing {clth['id']} was successfully selled!")
+    return clothes, sold_clothes
+
+# read the user input to modify the sold_clothes, changing clothes and styles
+# list as a side effect, returns clothes, sold clothes and styles lists
+def update_sold(clothes, sold_clothes, styles):
+    while(True):
+        print("")
+        selected_opt = sell_menu()
+        if selected_opt == 'c':
+            for_sale = clothing.filter('status', 'sale', clothes)
+            print_clothes(for_sale)
+            clth = select_clth(for_sale)
+            clothes, sold_clothes = sell_clth(clth , clothes, sold_clothes)
+            styles = style.remove_clth(clth, styles)
+        elif selected_opt == 's':
+            clth_style, index = select_style(styles, index=True)
+            if clth_style is None:
+                continue
+            print_clth_sets(clth_style['clothes_sets'])
+            confirm = confirm_menu()
+            if confirm == 'n':
+                continue
+            clth_sets = clth_style['clothes_sets']
+            print_clth_sets(clth_sets)
+            clth_set = select_clth_set(clth_sets)
+            if clth_set is None:
+                continue
+            for_sale = clothing.filter('status', 'sale', clth_set)
+            print_clothes(for_sale)
+            clth = select_clth(for_sale)
+            if clth is None:
+                continue
+            clothes, sold_clothes = sell_clth(clth, clothes, sold_clothes)
+            styles[index]['count'] += 1
+            styles = style.remove_clth(clth, styles)
+        elif selected_opt == 'b':
+            break
+
+    return clothes, sold_clothes, styles
 
 # read new clothing from the user and add it to a clothing list
 def add_clothing(clothes = []):

@@ -39,7 +39,7 @@ def check_field(value, field):
     elif field == 'color':
         result = check_color(value)
     elif field == 'purchase_date':
-        result = check_purchase_date(value)
+        result = check_date(value)
     elif field == 'status':
         result = check_status(value)
     elif field == 'price':
@@ -92,7 +92,7 @@ def check_color(value):
         err_msg = 'Empty color.'
     return { 'is_valid': is_valid_value, 'err': err_msg }
 
-def check_purchase_date(value):
+def check_date(value):
     is_valid_value = True
     err_msg = ''
     if not type(value) is tuple:
@@ -101,7 +101,7 @@ def check_purchase_date(value):
     if (not type(value[0]) is int or not type(value[1]) is int or
         not type(value[2]) is int):
         is_valid_value = False
-        err_msg = 'The purchase_date elements must be integers.'
+        err_msg = 'Date elements must be integers.'
     elif value[0] < 1 or value[0] > 31:
         is_valid_value = False
         err_msg = f"'{value[0]}' is not a valid day."
@@ -194,4 +194,20 @@ def sort_by_score(clothes, comp_clth):
 def filter_by_interest(clothes):
     ideal_clth = ideal(clothes)
     result = sort_by_score(clothes, ideal_clth)
+    return result
+
+# returns a sold clothing
+def sell(clth, sold_date, buyer):
+    if clth['status'] != 'sale':
+        raise Exception("Can't sell a clothing that is not for sale")
+    result = {
+        'id':  clth['id'],
+        'type': clth['type'],
+        'sex': clth['sex'],
+        'size': clth['size'],
+        'color': clth['color'],
+        'resolved_date': sold_date,
+        'price': clth['price'],
+        'agent': buyer
+    }
     return result
