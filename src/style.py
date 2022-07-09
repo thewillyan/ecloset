@@ -93,7 +93,7 @@ def can_make_set(clothes):
     return result
 
 # transform a clothing set in a list of clothes, return the clothes list
-def get_clothes(clth_set, clothes):
+def to_clothes(clth_set, clothes):
     result = []
     for clth_id in clth_set:
         clth = clth_filter('id', clth_id, clothes)[0]
@@ -120,3 +120,13 @@ def remove_clth(clth, styles):
                 new_clth_sets.remove(clth_set)
         styles[i]['clothes_sets'] = new_clth_sets
     return styles
+
+def rename(style, new_name, clothes):
+    for i in range( len(clothes) ):
+        clth = clothes[i].copy()
+        if style['name'] in clth['styles']:
+            clth['styles'].remove(style['name'])
+            clth['styles'].append(new_name)
+            clothes[i] = clth.copy()
+    style['name'] = new_name
+    return style, clothes

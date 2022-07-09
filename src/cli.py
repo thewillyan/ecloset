@@ -19,6 +19,7 @@ def sel_menu_opt(menu_options, msg="Select an option: "):
 def clothing_menu():
     clth_menu_options = {
         'a': 'add clothing',
+        'e': 'edit clothing',
         'l': 'list all clothes',
         'y': 'clothes for you',
         's': 'clothes for sale',
@@ -29,10 +30,27 @@ def clothing_menu():
     selected_opt = sel_menu_opt(clth_menu_options)
     return selected_opt
 
+# asks the user to select a changeable field from 'clth'
+def clothing_fields_menu(clth):
+    clothing_fields_options = {
+        't': 'type',
+        'x': 'sex',
+        's': 'size',
+        'c': 'color',
+        'd': 'purchase date',
+        'a': 'status'
+    }
+    if clth['price'] > 0:
+        clothing_fields_options['p'] = 'price'
+    print_menu(clothing_fields_options)
+    selected_opt = sel_menu_opt(clothing_fields_options)
+    return selected_opt
+
 # shows the style menu and returns the option selected by the user
 def style_menu():
     style_menu_options = {
         'n': 'create a new style',
+        'r': 'rename style',
         'l': 'list all styles',
         'c': 'list clothes of a style',
         'a': 'add clothes to style',
@@ -40,6 +58,15 @@ def style_menu():
     }
     print_menu(style_menu_options)
     selected_opt = sel_menu_opt(style_menu_options)
+    return selected_opt
+
+# asks the user to select a changeable field from 'clth_style'
+def styles_field_menu(clth_style):
+    style_field_options = { 'r': 'rename style' }
+    if len( clth_style['clothes_sets'] ) > 0:
+        style_field_options['c'] = 'change clothing set'
+    print_menu(style_field_options)
+    selected_opt = sel_menu_opt(style_field_options)
     return selected_opt
 
 # shows the menu and returns the option selected by the user
@@ -253,7 +280,7 @@ def print_styles(styles):
 def print_clth_sets(clth_sets, clothes):
     clothes_matrix = []
     for clth_set in clth_sets:
-        line = style.get_clothes(clth_set, clothes)
+        line = style.to_clothes(clth_set, clothes)
         clothes_matrix.append(line)
 
     for i, clothes in enumerate(clothes_matrix):
@@ -332,25 +359,61 @@ def select_clth_set(clth_sets):
             result = select_clth_set(clth_sets)
     return result
 
+# asks the user to select a field and change that field in 'clth', returns the
+# changed clothing
+def update_clothing(clth, clothes):
+    field = clothing_fields_menu(clth)
+    if field == 't':
+        clth['type'] = read_clth_type()
+    elif field == 'x':
+        clth['sex'] = read_clth_sex()
+    elif field == 's':
+        clth['size'] = read_clth_size()
+    elif field == 'c':
+        clth['color'] = read_not_empty('Enter the clothing main color','color')
+    elif field == 'd':
+        clth['purchase_date'] = read_date("Date of purchase.")
+    elif field == 'a':
+        clth['status'] = read_clth_status()
+        if clth['status'] == 'sale':
+            clth['price'] = read_clth_price()
+    elif field == 'p':
+        clth['price'] = read_clth_price()
+    return clth
+
 # read the user input to modify a given clothing list, return the modified list
 def update_clothes(clothes = []):
     while(True):
         print("")
         selected_opt = clothing_menu()
+        # add clothing
         if selected_opt == 'a':
             clothes = add_clothing(clothes)
             print("Added successfully!")
+        # edit clothing
+        elif selected_opt == 'e':
+            print_clothes(clothes)
+            clth = select_clth(clothes)
+            if clth is None:
+                continue
+            index = clothes.index(clth)
+            clothes[index] = update_clothing(clth, clothes)
+        # list clothes
         elif selected_opt == 'l':
             print_clothes(clothes)
+        # list clothes by user interest
         elif selected_opt == 'y':
             interest_clothes = clothing.filter_by_interest(clothes)
             print_clothes(interest_clothes)
+        # list clothes for sale
         elif selected_opt == 's':
             for_sale = clothing.filter('status', 'sale', clothes)
             print_clothes(for_sale)
+        # list clothes for donation
         elif selected_opt == 'd':
             for_donation = clothing.filter('status', 'donation', clothes)
             print_clothes(for_donation)
+        # back
         elif selected_opt == 'b':
             break
     return clothes
@@ -360,16 +423,27 @@ def update_styles(styles = [], clothes = []):
     while(True):
         print("")
         selected_opt = style_menu()
+        # new style
         if selected_opt == 'n':
             clth_style = read_style()
             styles.append(clth_style)
             print(f"Style '{clth_style['name']}' was created!")
+        # rename style
+        elif selected_opt == 'r':
+            clth_style, index = select_style(styles, index=True)
+            style_name = read_not_empty("Enter the style name", 'name')
+            styles[index], clothes = style.rename(clth_style, style_name,
+                                                  clothes)
+            print(f"Renamed to '{style_name}'.")
+        # list styles
         elif selected_opt == 'l':
             print_styles(styles)
+        # list clothing sets of a style
         elif selected_opt == 'c':
             clth_style, index = select_style(styles, index=True)
             if not clth_style is None:
                 print_clth_sets(clth_style['clothes_sets'], clothes)
+        # add clothing set to style
         elif selected_opt == 'a':
             clth_style, index = select_style(styles, index=True)
             # if is not a valid style, show the style menu again
@@ -384,15 +458,14 @@ def update_styles(styles = [], clothes = []):
             elif clth_set in styles[index]['clothes_sets']:
                 print(f"This outfit is already in {style_name}.")
                 continue
-
             styles[index]['clothes_sets'].append(clth_set)
-
-            for clth in style.get_clothes(clth_set, clothes):
+            for clth in style.to_clothes(clth_set, clothes):
                 if style_name in clth['styles']:
                     continue
                 i = clothes.index(clth)
                 clothes[i]['styles'].append(style_name)
             print("Added successfully!")
+        # back
         elif selected_opt == 'b':
             break
     return styles
@@ -432,7 +505,7 @@ def update_sold(clothes, sold_clothes, styles):
             clth_set = select_clth_set(clth_sets)
             if clth_set is None:
                 continue
-            clths = style.get_clothes(clth_set, clothes)
+            clths = style.to_clothes(clth_set, clothes)
             for_sale = clothing.filter('status', 'sale', clths)
             print_clothes(for_sale)
             clth = select_clth(for_sale)
@@ -481,7 +554,7 @@ def update_donated(clothes, donated_clths, styles):
             clth_set = select_clth_set(clth_sets)
             if clth_set is None:
                 continue
-            clths = style.get_clothes(clth_set, clothes)
+            clths = style.to_clothes(clth_set, clothes)
             for_donation = clothing.filter('status', 'donation', clths)
             print_clothes(for_donation)
             clth = select_clth(for_donation)
