@@ -250,8 +250,13 @@ def print_styles(styles):
         print('-' * 30)
 
 # prints all clothes_sets from 'clth_sets'
-def print_clth_sets(clth_sets):
-    for i, clothes in enumerate(clth_sets):
+def print_clth_sets(clth_sets, clothes):
+    clothes_matrix = []
+    for clth_set in clth_sets:
+        line = style.get_clothes(clth_set, clothes)
+        clothes_matrix.append(line)
+
+    for i, clothes in enumerate(clothes_matrix):
         print('-=' * 15)
         print(f"-> Outfit {i+1}")
         print_clothes(clothes)
@@ -362,20 +367,27 @@ def update_styles(styles = [], clothes = []):
         elif selected_opt == 'l':
             print_styles(styles)
         elif selected_opt == 'c':
-            style, index = select_style(styles, index=True)
-            if not style is None:
-                print_clth_sets(style['clothes_sets'])
+            clth_style, index = select_style(styles, index=True)
+            if not clth_style is None:
+                print_clth_sets(clth_style['clothes_sets'], clothes)
         elif selected_opt == 'a':
-            style, index = select_style(styles, index=True)
+            clth_style, index = select_style(styles, index=True)
             # if is not a valid style, show the style menu again
-            if style is None:
+            if clth_style is None:
                 continue
+            style_name = clth_style['name']
             print_clothes(clothes)
             clth_set = read_clth_set(clothes)
             # if is not a valid clothing set, show the style menu again
             if clth_set is None:
                 continue
             styles[index]['clothes_sets'].append(clth_set)
+
+            for clth in style.get_clothes(clth_set, clothes):
+                if style_name in clth['styles']:
+                    continue
+                i = clothes.index(clth)
+                clothes[i]['styles'].append(style_name)
             print("Added successfully!")
         elif selected_opt == 'b':
             break
@@ -407,16 +419,17 @@ def update_sold(clothes, sold_clothes, styles):
             clth_style, index = select_style(styles, index=True)
             if clth_style is None:
                 continue
-            print_clth_sets(clth_style['clothes_sets'])
+            print_clth_sets(clth_style['clothes_sets'], clothes)
             confirm = confirm_menu()
             if confirm == 'n':
                 continue
             clth_sets = clth_style['clothes_sets']
-            print_clth_sets(clth_sets)
+            print_clth_sets(clth_sets, clothes)
             clth_set = select_clth_set(clth_sets)
             if clth_set is None:
                 continue
-            for_sale = clothing.filter('status', 'sale', clth_set)
+            clths = style.get_clothes(clth_set, clothes)
+            for_sale = clothing.filter('status', 'sale', clths)
             print_clothes(for_sale)
             clth = select_clth(for_sale)
             if clth is None:

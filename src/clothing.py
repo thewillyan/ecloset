@@ -13,7 +13,8 @@ def new_clothing(
         'color': clth_color,
         'purchase_date': clth_purchase_date,
         'status': clth_status,
-        'price': clth_price
+        'price': clth_price,
+        'styles': []
     }
     result = { 'is_valid': True, 'content': clothing }
 
@@ -44,6 +45,8 @@ def check_field(value, field):
         result = check_status(value)
     elif field == 'price':
         result = check_price(value)
+    elif field == 'styles':
+        result = check_styles(value)
     return result
 
 def check_id(value):
@@ -130,6 +133,14 @@ def check_price(value):
     elif value < 0:
         is_valid_value = False
         err_msg = 'The price must be a not negative number.'
+    return { 'is_valid': is_valid_value, 'err': err_msg }
+
+def check_styles(value):
+    is_valid_value = True
+    err_msg = ''
+    if not type(value) in list:
+        is_valid_value = Fase
+        err_msg = 'styles must be a list.'
     return { 'is_valid': is_valid_value, 'err': err_msg }
 
 # return a new valid clothing id

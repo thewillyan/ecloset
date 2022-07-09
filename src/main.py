@@ -6,17 +6,23 @@ styles = []
 
 # default clothes for test purposes
 clothes = [{'id': 1, 'type': 'upper', 'sex': 'M', 'size': 'P', 'color': 'blue',
-           'purchase_date': (20, 2, 2022), 'status': 'donation', 'price': 0},
+           'purchase_date': (20, 2, 2022), 'status': 'donation', 'price': 0,
+            'styles': []},
           {'id': 2, 'type': 'lower', 'sex': 'M', 'size': 'P', 'color': 'red',
-           'purchase_date': (20, 2, 2022), 'status': 'donation', 'price': 0},
+           'purchase_date': (20, 2, 2022), 'status': 'donation', 'price': 0,
+            'styles': []},
           {'id': 3, 'type': 'footwear', 'sex': 'M', 'size': 'P', 'color': 'black',
-           'purchase_date': (20, 2, 2022), 'status': 'donation', 'price': 0},
+           'purchase_date': (20, 2, 2022), 'status': 'donation', 'price': 0,
+            'styles': []},
           {'id': 4, 'type': 'footwear', 'sex': 'M', 'size': 'P', 'color': 'black',
-           'purchase_date': (20, 2, 2022), 'status': 'sale', 'price': 10000},
+           'purchase_date': (20, 2, 2022), 'status': 'sale', 'price': 10000,
+            'styles': []},
           {'id': 5, 'type': 'lower', 'sex': 'M', 'size': 'P', 'color': 'red',
-           'purchase_date': (20, 2, 2022), 'status': 'sale', 'price': 5000},
+           'purchase_date': (20, 2, 2022), 'status': 'sale', 'price': 5000,
+            'styles': []},
           {'id': 6, 'type': 'lower', 'sex': 'F', 'size': 'M', 'color': 'orange',
-           'purchase_date': (20, 2, 2022), 'status': 'keep', 'price': 0}]
+           'purchase_date': (20, 2, 2022), 'status': 'keep', 'price': 0,
+            'styles': []}]
 
 def main_menu():
     main_menu_options = {

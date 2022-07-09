@@ -1,3 +1,5 @@
+from clothing import filter as clth_filter
+
 # try to create a valid style and returns a dict with 
 # is_valid and content (if is_valid is True) or
 # is_valid and error (if is_valid is False)
@@ -5,7 +7,7 @@ def new_style(style_name, clothes_sets):
     style = {
         'name': style_name,
         'count': 0,
-        'clothes_sets': clothes_sets
+        'clothes_sets': []
     }
     result = {
         'is_valid': True,
@@ -14,32 +16,34 @@ def new_style(style_name, clothes_sets):
 
     if len(clothes_sets) > 0:
         for clothes_set in clothes_sets:
-            check_result = check_clothes_set(clothes_set)
-            if not check_result['is_valid']:
-                result = check_result
+            clth_set = new_clth_set(*clothes_set)
+            if not clth_set['is_valid']:
+                result = clth_set
+                break
+            else:
+                result['content']['clothes_sets'].append(clth_set)
     return result
 
-# try to create a valid clothing set and returns a dict with 
+# try to create a valid clothing set (list of 3 clothing id's)
+# and returns a dict with:
 # is_valid and content (if is_valid is True) or
 # is_valid and error (if is_valid is False)
 def new_clth_set(clth1, clth2, clth3):
-    clth_set = [ clth1, clth2, clth3 ]
-    if can_make_set(clth_set):
+    clothes = [ clth1, clth2, clth3 ]
+    if can_make_set(clothes):
         # put clothes in order
-        for clth in clth_set.copy():
+        for clth in clothes.copy():
             if clth['type'] == 'upper':
-                clth_set[0] = clth
+                clothes[0] = clth
             elif clth['type'] == 'lower':
-                clth_set[1] = clth
+                clothes[1] = clth
             elif clth['type'] == 'footwear':
-                clth_set[2] = clth
+                clothes[2] = clth
 
-    result = {
-        'is_valid': True,
-        'content': clth_set
-    }
+    clth_set = [ clothes[0]['id'], clothes[1]['id'], clothes[2]['id'] ]
+    result = { 'is_valid': True, 'content': clth_set }
 
-    check_result = check_clothes_set(clth_set)
+    check_result = check_clothes_set(clothes)
     if not check_result['is_valid']:
         result = check_result
     return result
@@ -88,12 +92,20 @@ def can_make_set(clothes):
             break
     return result
 
+# transform a clothing set in a list of clothes, return the clothes list
+def get_clothes(clth_set, clothes):
+    result = []
+    for clth_id in clth_set:
+        clth = clth_filter('id', clth_id, clothes)[0]
+        result.append(clth)
+    return result
+
 # returns a list with all styles where 'clth' appears
 def get_styles(clth, styles):
     result = []
     for style in styles:
         for clth_set in style['clothes_sets']:
-            if clth in clth_set:
+            if clth['id'] in clth_set:
                 result.append(style['name'])
                 break
     return result
@@ -104,7 +116,7 @@ def remove_clth(clth, styles):
         style = styles[i]
         new_clth_sets = style['clothes_sets'].copy()
         for clth_set in style['clothes_sets']:
-            if clth in clth_set:
+            if clth['id'] in clth_set:
                 new_clth_sets.remove(clth_set)
         styles[i]['clothes_sets'] = new_clth_sets
     return styles
