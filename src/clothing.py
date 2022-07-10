@@ -278,3 +278,12 @@ def donate(clth, donation_date, agent):
     elif not result['is_valid']:
         raise Exception(f"Error: {result['err']}")
     return result['content']
+
+# remove a style from all the 'clothes', returns the modified clothes list
+def remove_style(style, clothes):
+    for i in range( len(clothes) ):
+        styles = clothes[i]['styles'].copy()
+        if style['name'] in styles:
+            styles.remove(style['name'])
+        clothes[i]['styles'] = styles
+    return clothes

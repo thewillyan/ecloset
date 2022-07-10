@@ -42,9 +42,9 @@ while(True):
     selected_opt = main_menu()
 
     if selected_opt == 'c':
-        clothes = cli.update_clothes(clothes)
+        clothes, styles = cli.update_clothes(clothes, styles)
     elif selected_opt == 's':
-        style_list = cli.update_styles(styles, clothes)
+        styles = cli.update_styles(styles, clothes)
     elif selected_opt == 'e':
         clothes, sold_clothes, styles = cli.update_sold(clothes, sold_clothes,
                                                         styles)

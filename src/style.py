@@ -121,6 +121,7 @@ def remove_clth(clth, styles):
         styles[i]['clothes_sets'] = new_clth_sets
     return styles
 
+# returns a renamed style and a clothes list with the style renamed
 def rename(style, new_name, clothes):
     for i in range( len(clothes) ):
         clth = clothes[i].copy()

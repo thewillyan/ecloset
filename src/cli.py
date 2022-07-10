@@ -20,6 +20,7 @@ def clothing_menu():
     clth_menu_options = {
         'a': 'add clothing',
         'e': 'edit clothing',
+        'r': 'remove clothing',
         'l': 'list all clothes',
         'y': 'clothes for you',
         's': 'clothes for sale',
@@ -51,6 +52,7 @@ def style_menu():
     style_menu_options = {
         'n': 'create a new style',
         'r': 'rename style',
+        'm': 'remove style',
         'l': 'list all styles',
         'c': 'list clothes of a style',
         'a': 'add clothes to style',
@@ -382,7 +384,7 @@ def update_clothing(clth, clothes):
     return clth
 
 # read the user input to modify a given clothing list, return the modified list
-def update_clothes(clothes = []):
+def update_clothes(clothes, styles):
     while(True):
         print("")
         selected_opt = clothing_menu()
@@ -398,6 +400,15 @@ def update_clothes(clothes = []):
                 continue
             index = clothes.index(clth)
             clothes[index] = update_clothing(clth, clothes)
+        # remove clothing
+        elif selected_opt == 'r':
+            print_clothes(clothes)
+            clth = select_clth(clothes)
+            if clth is None:
+                continue
+            clothes.remove(clth)
+            styles = style.remove_clth(clth, styles)
+            print(f"Clothing {clth['id']} was removed!")
         # list clothes
         elif selected_opt == 'l':
             print_clothes(clothes)
@@ -416,7 +427,7 @@ def update_clothes(clothes = []):
         # back
         elif selected_opt == 'b':
             break
-    return clothes
+    return clothes, styles
 
 # read the user input to modify a given style list, return the modified list
 def update_styles(styles = [], clothes = []):
@@ -435,6 +446,12 @@ def update_styles(styles = [], clothes = []):
             styles[index], clothes = style.rename(clth_style, style_name,
                                                   clothes)
             print(f"Renamed to '{style_name}'.")
+        # remove style
+        elif selected_opt == 'm':
+            clth_style, index = select_style(styles, index=True)
+            styles.remove(clth_style)
+            clothes = clothing.remove_style(clth_style, clothes)
+            print(f"Style '{clth_style['name']}' was removed!")
         # list styles
         elif selected_opt == 'l':
             print_styles(styles)
