@@ -21,10 +21,6 @@ def clothing_menu():
         'a': 'add clothing',
         'e': 'edit clothing',
         'r': 'remove clothing',
-        'l': 'list all clothes',
-        'y': 'clothes for you',
-        's': 'clothes for sale',
-        'd': 'clothes for donation',
         'b': 'back'
     }
     print_menu(clth_menu_options)
@@ -53,8 +49,6 @@ def style_menu():
         'n': 'create a new style',
         'r': 'rename style',
         'm': 'remove style',
-        'l': 'list all styles',
-        'c': 'list clothes of a style',
         'a': 'add clothes to style',
         'b': 'back'
     }
@@ -252,6 +246,12 @@ def print_clothing(clth):
         elif key == 'purchase_date':
             clth_field = "Purchase date"
             clth_data = f"{value[0]:02d}/{value[1]:02d}/{value[2]:04d}"
+        elif key == 'resolved_date':
+            if 'price' in clth.keys():
+                clth_field = "Sale date"
+            else:
+                clth_field = "Donation date"
+            clth_data = f"{value[0]:02d}/{value[1]:02d}/{value[2]:04d}"
         elif key == 'status':
             clth_data = f"For {value}"
         elif key == 'price':
@@ -409,21 +409,6 @@ def update_clothes(clothes, styles):
             clothes.remove(clth)
             styles = style.remove_clth(clth, styles)
             print(f"Clothing {clth['id']} was removed!")
-        # list clothes
-        elif selected_opt == 'l':
-            print_clothes(clothes)
-        # list clothes by user interest
-        elif selected_opt == 'y':
-            interest_clothes = clothing.filter_by_interest(clothes)
-            print_clothes(interest_clothes)
-        # list clothes for sale
-        elif selected_opt == 's':
-            for_sale = clothing.filter('status', 'sale', clothes)
-            print_clothes(for_sale)
-        # list clothes for donation
-        elif selected_opt == 'd':
-            for_donation = clothing.filter('status', 'donation', clothes)
-            print_clothes(for_donation)
         # back
         elif selected_opt == 'b':
             break
@@ -452,14 +437,6 @@ def update_styles(styles = [], clothes = []):
             styles.remove(clth_style)
             clothes = clothing.remove_style(clth_style, clothes)
             print(f"Style '{clth_style['name']}' was removed!")
-        # list styles
-        elif selected_opt == 'l':
-            print_styles(styles)
-        # list clothing sets of a style
-        elif selected_opt == 'c':
-            clth_style, index = select_style(styles, index=True)
-            if not clth_style is None:
-                print_clth_sets(clth_style['clothes_sets'], clothes)
         # add clothing set to style
         elif selected_opt == 'a':
             clth_style, index = select_style(styles, index=True)
@@ -485,7 +462,7 @@ def update_styles(styles = [], clothes = []):
         # back
         elif selected_opt == 'b':
             break
-    return styles
+    return styles, clothes
 
 # sell 'clth' based on user input, returns the clothes and sold list
 def sell_clth(clth, clothes, sold_clothes):
@@ -533,7 +510,6 @@ def update_sold(clothes, sold_clothes, styles):
             styles = style.remove_clth(clth, styles)
         elif selected_opt == 'b':
             break
-
     return clothes, sold_clothes, styles
 
 # sell 'clth' based on user input, returns the clothes and sold list
@@ -582,7 +558,6 @@ def update_donated(clothes, donated_clths, styles):
             styles = style.remove_clth(clth, styles)
         elif selected_opt == 'b':
             break
-
     return clothes, donated_clths, styles
 
 # read new clothing from the user and add it to a clothing list

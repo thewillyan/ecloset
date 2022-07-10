@@ -168,7 +168,8 @@ def match_score(clth1, clth2):
 def ideal(clothes):
     result = {}
     for key in clothes[0].keys():
-        result[key] = common_value(clothes, key)
+        if key != 'styles':
+            result[key] = common_value(clothes, key)
     return result
 
 # returns the most common value of 'key' in 'clothes'
