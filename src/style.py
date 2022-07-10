@@ -131,3 +131,16 @@ def rename(style, new_name, clothes):
             clothes[i] = clth.copy()
     style['name'] = new_name
     return style, clothes
+
+# returns a sorted styles list in descending order of counter
+def sort_by_counter(styles):
+    counters = []
+    for i in range( len(styles) ):
+       counter = styles[i]['count']
+       counters.append([counter, i])
+
+    counters.sort(reverse=True)
+    sorted_styles = []
+    for counter, index in counters:
+        sorted_styles.append(styles[index])
+    return sorted_styles

@@ -1,5 +1,6 @@
 import cli
 import clothing
+from style import sort_by_counter
 
 clothes = []
 sold_clothes = []
@@ -41,11 +42,12 @@ def main_menu():
 
 def list_menu():
     list_menu_options = {
-        'a': 'all clothes',
+        'a': 'clothes',
         'y': 'clothes for you',
         's': 'sold clothes',
         'd': 'donated clothes',
         't': 'styles',
+        'f': 'favorite styles',
         'c': 'list clothes of a style'
     }
     cli.print_menu(list_menu_options)
@@ -75,9 +77,9 @@ while(True):
         # list all clothes
         if opt == 'a':
             cli.print_clothes(clothes)
-        # list clothes by user interest
+        # list clothes by user interest (5 of then)
         elif opt == 'y':
-            interest_clothes = clothing.filter_by_interest(clothes)
+            interest_clothes = clothing.filter_by_interest(clothes)[:5]
             cli.print_clothes(interest_clothes)
         # list sold clothes
         elif opt == 's':
@@ -88,6 +90,10 @@ while(True):
         # list styles
         elif opt == 't':
             cli.print_styles(styles)
+        # list styles with higher counter (5 of then)
+        elif opt == 'f':
+            favorites = sort_by_counter(styles)[:5]
+            cli.print_styles(favorites)
         # list clothes of a certain style
         elif opt == 'c':
             clth_style, index = cli.select_style(styles, index=True)

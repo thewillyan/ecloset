@@ -453,6 +453,7 @@ def update_styles(styles = [], clothes = []):
                 print(f"This outfit is already in {style_name}.")
                 continue
             styles[index]['clothes_sets'].append(clth_set)
+            styles[index]['count'] += 1
             for clth in style.to_clothes(clth_set, clothes):
                 if style_name in clth['styles']:
                     continue
