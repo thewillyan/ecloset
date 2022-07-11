@@ -138,7 +138,7 @@ def check_price(value):
 def check_styles(value):
     is_valid_value = True
     err_msg = ''
-    if not type(value) in list:
+    if not type(value) is list:
         is_valid_value = Fase
         err_msg = 'styles must be a list.'
     return { 'is_valid': is_valid_value, 'err': err_msg }

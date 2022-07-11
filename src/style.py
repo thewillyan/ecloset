@@ -3,10 +3,10 @@ from clothing import filter as clth_filter
 # try to create a valid style and returns a dict with 
 # is_valid and content (if is_valid is True) or
 # is_valid and error (if is_valid is False)
-def new_style(style_name, clothes_sets):
+def new_style(style_name, clothes_sets, count=0):
     style = {
         'name': style_name,
-        'count': 0,
+        'count': count,
         'clothes_sets': []
     }
     result = {
@@ -22,6 +22,10 @@ def new_style(style_name, clothes_sets):
                 break
             else:
                 result['content']['clothes_sets'].append(clth_set)
+
+    check_result = check_count(count)
+    if not check_result['is_valid']:
+        result = check_result
     return result
 
 # try to create a valid clothing set (list of 3 clothing id's)
@@ -47,6 +51,15 @@ def new_clth_set(clth1, clth2, clth3):
     if not check_result['is_valid']:
         result = check_result
     return result
+
+# verify if 'count' is a valid counter
+def check_count(count):
+    is_valid = True
+    err_msg = ""
+    if count < 0:
+        is_valid = False
+        err_msg = f"'{count}' is not a valid counter!"
+    return { 'is_valid': is_valid, 'err': err_msg }
 
 # verify if 'clothes' is a valid clothing set and returns a dict with
 # is_valid and arror (if any)
