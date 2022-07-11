@@ -48,7 +48,8 @@ def list_menu():
         'd': 'donated clothes',
         't': 'styles',
         'f': 'favorite styles',
-        'c': 'list clothes of a style'
+        'c': 'list clothes of a style',
+        'e': 'search donated clothes by agent'
     }
     cli.print_menu(list_menu_options)
     selected_opt = cli.sel_menu_opt(list_menu_options)
@@ -99,6 +100,11 @@ while(True):
             clth_style, index = cli.select_style(styles, index=True)
             if not clth_style is None:
                 cli.print_clth_sets(clth_style['clothes_sets'], clothes)
+        # list donated clothes based on the agent
+        elif opt == 'e':
+            agent = cli.read_not_empty("Enter the agent name", "agent")
+            filtered_clths = clothing.filter('agent', agent, donated_clothes)
+            cli.print_clothes(filtered_clths)
     # quit
     elif selected_opt == 'q':
         break
