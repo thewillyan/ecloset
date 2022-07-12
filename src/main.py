@@ -1,17 +1,26 @@
 import cli
+import storage
 import clothing
 from style import sort_by_counter
-import storage
+from os.path import dirname, join
+
+# get the current script path
+PATH = dirname(__file__)
+CLOTHES_DIR = join(PATH, 'clothes_data.txt')
+STYLES_DIR = join(PATH, 'styles_data.txt')
+SOLD_DIR = join(PATH, 'sold_data.txt')
+DONATED_DIR = join(PATH, 'donated_data.txt')
 
 # if dont exists, create data files
-data_files = ['clothes_data.txt', 'styles_data.txt']
-for file in data_files:
-    open(file, "a+")
+data_files = [ CLOTHES_DIR, STYLES_DIR, SOLD_DIR,
+              DONATED_DIR ]
+for file_dir in data_files:
+    open(file_dir, "a+")
 
-sold_clothes = []
-donated_clothes = []
-clothes = storage.read_clothes( "clothes_data.txt" )
-styles = storage.read_styles( "styles_data.txt", clothes )
+clothes = storage.read_clothes( CLOTHES_DIR )
+styles = storage.read_styles( STYLES_DIR, clothes )
+sold_clothes = storage.read_sell( SOLD_DIR )
+donated_clothes = storage.read_donations( DONATED_DIR )
 
 def main_menu():
     main_menu_options = {
@@ -94,8 +103,10 @@ while(True):
     # quit
     elif selected_opt == 'q':
         # save changes to file
-        storage.upadate_clothes( "clothes_data.txt", clothes )
-        storage.update_style( styles, "styles_data.txt", clothes )
+        storage.upadate_clothes( CLOTHES_DIR, clothes )
+        storage.update_style( styles, STYLES_DIR, clothes )
+        storage.upadate_donation( DONATED_DIR, donated_clothes )
+        storage.upadate_sell( SOLD_DIR, sold_clothes )
         break
 
 print('')

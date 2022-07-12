@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 from clothing import new_clothing, new_donated_clth, new_sold_clth
-from style import check_clothes_set, new_style
-=======
-from clothing import new_clothing
 from style import check_clothes_set, new_style, to_clothes
->>>>>>> 5317a749626f1fd2d3d3564af7cb33714f7cf5e9
 
 def remove_spaces( string ):
     string_size = len( string )
@@ -412,14 +407,10 @@ def donation_to_str( donation, index_str ):
     lines.append( "color = " + '"' + donation["color"] + '"\n' )
 
     date = donation["resolved_date"]
+    day = f"{date[0]:02d}"
+    month = f"{date[1]:02d}"
+    year = f"{date[2]:04d}"
 
-    for x in range( 0,2 ):
-        if( date[x] < 10 ):
-            day = "0" + str( date[x] )
-        else: 
-            month = str( date[x] )
-
-    year = str( date[2] )
 
     lines.append( "resolved_date = " + '"' + day + "/" + month + "/" + year + '"\n' )
 
@@ -518,14 +509,9 @@ def sell_to_str( sell, index_str ):
     lines.append( "color = " + '"' + sell["color"] + '"\n' )
 
     date = sell["resolved_date"]
-
-    for x in range( 0,2 ):
-        if( date[x] < 10 ):
-            day = "0" + str( date[x] )
-        else: 
-            month = str( date[x] )
-
-    year = str( date[2] )
+    day = f"{date[0]:02d}"
+    month = f"{date[1]:02d}"
+    year = f"{date[2]:04d}"
 
     lines.append( "resolved_date = " + '"' + day + "/" + month + "/" + year + '"\n' )
     lines.append( "price = " + str( sell["price"] ) + '\n' )
@@ -537,18 +523,3 @@ def sell_to_str( sell, index_str ):
         lines_unified_str = lines_unified_str + line
 
     return lines_unified_str
-
-# clothes_list = read_clothes( "clothes_data.txt" )
-# styles_list = read_styles( "styles_data.txt", clothes_list )
-donation_list = read_donations( "donations_data.txt" )
-sold_list = read_sell( "sell_data.txt" )
-
-sold_list[1]["price"] = 90
-donation_list[0]["agent"] = "Hopper"
-
-upadate_sell( "sell_data.txt", sold_list )
-upadate_donation( "donations_data.txt", donation_list )
-
-
-# update_style( styles_list, "styles_data.txt" )
-# upadate_clothes( "clothes_data.txt", clothes_list )

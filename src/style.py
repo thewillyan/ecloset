@@ -21,7 +21,7 @@ def new_style(style_name, clothes_sets, count=0):
                 result = clth_set
                 break
             else:
-                result['content']['clothes_sets'].append(clth_set)
+                result['content']['clothes_sets'].append(clth_set['content'])
 
     check_result = check_count(count)
     if not check_result['is_valid']:
