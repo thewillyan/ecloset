@@ -1,4 +1,4 @@
-from clothing import new_clothing
+from clothing import new_clothing, new_donated_clth, new_sold_clth
 from style import check_clothes_set, new_style
 
 def remove_spaces( string ):
@@ -326,9 +326,227 @@ def second_read( str_list_part ):
 
     return count
 
+def read_donations( path ):
+    file = open( path, "r" )
+
+    file_lines = file.readlines()
+
+    donations_begin_lines = line_search( file_lines, "[Donation_" )
+
+    donated_list = []
+
+    for line_index in donations_begin_lines:
+        donation_raw = split_atts( file_lines[ line_index + 1:line_index + 8 ] )
+
+        donation_types_raw = donation_raw[0]
+        donation_atts_raw = donation_raw[1]
+
+        # print( donation_types_raw  )
+
+        if( donation_atts_check( donation_types_raw ) == True ):    
+            donation = raw_donation_lapidate( donation_atts_raw )
+
+            donated_list.append( donation )
+        else:
+            print( "ERRO NA ROUPA: [Donation_" + str( line_index ) + "]" ) 
+
+    file.close()
+
+    return donated_list
+
+def raw_donation_lapidate( clothe_raw_atts ):
+    id = id_raw_lapidate( clothe_raw_atts[0] )
+    type = type_raw_lapidate( clothe_raw_atts[1] )
+    sex = sex_raw_lapidate( clothe_raw_atts[2] )
+    size = size_raw_lapidate( clothe_raw_atts[3] )
+    color = color_raw_lapidate( clothe_raw_atts[4] )
+    resolved_date = date_raw_lapidate( clothe_raw_atts[5])
+    agent = status_raw_lapidate( clothe_raw_atts[6] )
+
+    clothe_result = new_donated_clth( 
+        id, type, sex, size, color,
+        resolved_date, agent
+    )
+
+    if( clothe_result["is_valid"] == True ):
+        return clothe_result["content"]
+    else:
+        return False
+
+def donation_atts_check( donation_atts_raw ):
+    if( donation_atts_raw[0] == "id"
+    and donation_atts_raw[1] == "type"
+    and donation_atts_raw[2] == "sex"
+    and donation_atts_raw[3] == "size"
+    and donation_atts_raw[4] == "color"
+    and donation_atts_raw[5] == "resolved_date"
+    and donation_atts_raw[6] == "agent"
+ ):
+        return True
+    else:
+        return False
+
+def upadate_donation( path, clothe_list ):
+
+    file_str = ""
+
+    for clothe in clothe_list:
+        file_str = file_str + donation_to_str( clothe, str( clothe_list.index( clothe ) ) ) + "\n"
+
+    file = open( path, "w" )
+
+    file.write( file_str )
+
+    file.close()
+
+def donation_to_str( donation, index_str ):
+    lines = []
+
+    lines.append( "[Donation_" + index_str + "]\n" )
+    lines.append( "id = " + str( donation["id"] ) + "\n")
+    lines.append( "type = " + '"' + donation["type"] + '"\n' )
+    lines.append( "sex = " + '"' + donation["sex"] + '"\n' )
+    lines.append( "size = " + '"' + donation["size"] + '"\n' )
+    lines.append( "color = " + '"' + donation["color"] + '"\n' )
+
+    date = donation["resolved_date"]
+
+    for x in range( 0,2 ):
+        if( date[x] < 10 ):
+            day = "0" + str( date[x] )
+        else: 
+            month = str( date[x] )
+
+    year = str( date[2] )
+
+    lines.append( "resolved_date = " + '"' + day + "/" + month + "/" + year + '"\n' )
+
+    lines.append( "agent = " + '"' + donation["agent"] + '"\n' )
+
+    lines_unified_str = ""
+
+    for line in lines:
+        lines_unified_str = lines_unified_str + line
+
+    return lines_unified_str
+
+def read_sell( path ):
+    file = open( path, "r" )
+
+    file_lines = file.readlines()
+
+    sell_begin_lines = line_search( file_lines, "[Sell_" )
+
+    sold_list = []
+
+    for line_index in sell_begin_lines:
+        sell_raw = split_atts( file_lines[ line_index + 1:line_index + 9 ] )
+
+        sell_types_raw = sell_raw[0]
+        sell_atts_raw = sell_raw[1]
+
+        print( sell_types_raw  )
+
+        if( sell_atts_check( sell_types_raw ) == True ):    
+            sell = raw_sell_lapidate( sell_atts_raw )
+
+            sold_list.append( sell )
+        else:
+            print( "ERRO NA ROUPA: [Sell_" + str( line_index ) + "]" ) 
+
+    file.close()
+
+    return sold_list
+
+def raw_sell_lapidate( sell_raw_atts ):
+    id = id_raw_lapidate( sell_raw_atts[0] )
+    type = type_raw_lapidate( sell_raw_atts[1] )
+    sex = sex_raw_lapidate( sell_raw_atts[2] )
+    size = size_raw_lapidate( sell_raw_atts[3] )
+    color = color_raw_lapidate( sell_raw_atts[4] )
+    resolved_date = date_raw_lapidate( sell_raw_atts[5])
+    price = price_raw_lapidate( sell_raw_atts[6] )
+    agent = status_raw_lapidate( sell_raw_atts[7] )
+
+    sell_result = new_sold_clth( 
+        id, type, sex, size, color,
+        resolved_date, price, agent
+    )
+
+    if( sell_result["is_valid"] == True ):
+        return sell_result["content"]
+    else:
+        return False
+
+def sell_atts_check( sell_atts_raw ):
+    if( sell_atts_raw[0] == "id"
+    and sell_atts_raw[1] == "type"
+    and sell_atts_raw[2] == "sex"
+    and sell_atts_raw[3] == "size"
+    and sell_atts_raw[4] == "color"
+    and sell_atts_raw[5] == "resolved_date"
+    and sell_atts_raw[6] == "price"
+    and sell_atts_raw[7] == "agent"
+ ):
+        return True
+    else:
+        return False
+
+def upadate_sell( path, clothe_list ):
+
+    file_str = ""
+
+    for clothe in clothe_list:
+        file_str = file_str + sell_to_str( clothe, str( clothe_list.index( clothe ) ) ) + "\n"
+
+    file = open( path, "w" )
+
+    file.write( file_str )
+
+    file.close()
+
+def sell_to_str( sell, index_str ):
+    lines = []
+
+    lines.append( "[Sell_" + index_str + "]\n" )
+    lines.append( "id = " + str( sell["id"] ) + "\n")
+    lines.append( "type = " + '"' + sell["type"] + '"\n' )
+    lines.append( "sex = " + '"' + sell["sex"] + '"\n' )
+    lines.append( "size = " + '"' + sell["size"] + '"\n' )
+    lines.append( "color = " + '"' + sell["color"] + '"\n' )
+
+    date = sell["resolved_date"]
+
+    for x in range( 0,2 ):
+        if( date[x] < 10 ):
+            day = "0" + str( date[x] )
+        else: 
+            month = str( date[x] )
+
+    year = str( date[2] )
+
+    lines.append( "resolved_date = " + '"' + day + "/" + month + "/" + year + '"\n' )
+    lines.append( "price = " + str( sell["price"] ) + '\n' )
+    lines.append( "agent = " + '"' + sell["agent"] + '"\n' )
+
+    lines_unified_str = ""
+
+    for line in lines:
+        lines_unified_str = lines_unified_str + line
+
+    return lines_unified_str
 
 # clothes_list = read_clothes( "clothes_data.txt" )
 # styles_list = read_styles( "styles_data.txt", clothes_list )
+donation_list = read_donations( "donations_data.txt" )
+sold_list = read_sell( "sell_data.txt" )
+
+sold_list[1]["price"] = 90
+donation_list[0]["agent"] = "Hopper"
+
+upadate_sell( "sell_data.txt", sold_list )
+upadate_donation( "donations_data.txt", donation_list )
+
 
 # update_style( styles_list, "styles_data.txt" )
 # upadate_clothes( "clothes_data.txt", clothes_list )
