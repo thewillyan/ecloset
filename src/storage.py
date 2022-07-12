@@ -1,3 +1,6 @@
+from clothing import new_clothing
+from style import check_clothes_set, new_style
+
 def remove_spaces( string ):
     string_size = len( string )
 
@@ -14,16 +17,16 @@ def remove_spaces( string ):
     else:
         return ""
 
-def clothe_begin( file_lines ):
+def line_search( file_lines, coder ):
     mark_list = []
 
     for line in file_lines:
-        if( line[0:10] == "[Clothing_" ):
+        if( line[0:len( coder )] == coder ):
             mark_list.append( file_lines.index( line ) )
 
     return mark_list
 
-def clothe_split_atts( clothe_usual_lines ):
+def split_atts( clothe_usual_lines ):
     types_list = []
     raw_values_list = []
 
@@ -47,19 +50,17 @@ def raw_clothe_lapidate( clothe_raw_atts ):
     price = price_raw_lapidate( clothe_raw_atts[7] )
     styles = styles_raw_lapidate( clothe_raw_atts[8] )
 
-    clothe = { 
-        "id": id,
-        "type": type,
-        "sex": sex,
-        "size": size,
-        "color": color,
-        "purchase_date": purchase_date,
-        "status": status,
-        "price": price,
-        "styles": styles
-    }
+    clothe_result = new_clothing( 
+        id, type, sex, size, color,
+        purchase_date, status, price
+    )
 
-    return clothe
+
+    if( clothe_result["is_valid"] == True ):
+        clothe_result["content"]["styles"] = styles
+        return clothe_result["content"]
+    else:
+        return False
 
 def id_raw_lapidate( id_str ):
     return int( id_str )
@@ -112,25 +113,26 @@ def atts_check( clothe_atts_raw ):
     and clothe_atts_raw[5] == "purchase_date"
     and clothe_atts_raw[6] == "status"
     and clothe_atts_raw[7] == "price"
-    and clothe_atts_raw[8] == "styles"):
+    and clothe_atts_raw[8] == "styles" ):
         return True
     else:
         return False
 
-def read_data( path ):
+def read_clothes( path ):
     file = open( path, "r" )
 
     file_lines = file.readlines()
 
-    clothes_begin_lines = clothe_begin( file_lines )
+    clothes_begin_lines = line_search( file_lines, "[Clothing_" )
 
     clothe_list = []
 
     for line_index in clothes_begin_lines:
-        clothe_raw = clothe_split_atts( file_lines[ line_index + 1:line_index + 10 ] )
+        clothe_raw = split_atts( file_lines[ line_index + 1:line_index + 10 ] )
 
         clothe_types_raw = clothe_raw[0]
         clothe_atts_raw = clothe_raw[1]
+
 
         if( atts_check( clothe_types_raw ) == True ):    
             clothe = raw_clothe_lapidate( clothe_atts_raw )
@@ -142,17 +144,6 @@ def read_data( path ):
     file.close()
 
     return clothe_list
-
-def print_clothes( clothes_list ):
-    for clothe in clothes_list: 
-        print( "id: ",clothe["id"] )
-        print( "type: ", clothe["type"] )
-        print( "size: ", clothe["size"] )
-        print( "color: ", clothe["color"] )
-        print( "purchase_date: ",clothe["purchase_date"] )
-        print( "status: ", clothe["status"] )
-        print( "price: ", clothe["price"] )
-        print( "styles: ",clothe["styles"], "\n" )
 
 def clothe_to_str( clothe, index_str ):
     lines = []
@@ -178,18 +169,15 @@ def clothe_to_str( clothe, index_str ):
 
     lines.append( "status = " + '"' + clothe["status"] + '"\n' )
     lines.append( "price = " + str( clothe["price"] ) + "\n")
-
-    styles_line = "styles = [ "
-    style_marks = [ '"', '", ', " ]\n" ]
+    lines.append( "styles = [" )
 
     for style in clothe["styles"]:
-        styles_line = styles_line + style_marks[0] + style + style_marks[1]
+        lines[-1] = lines[-1] + ' "' + style + '",'
 
-    if( len( clothe["styles"] ) > 0 ):
-        styles_line = styles_line[0:-2] + style_marks[2]
-    else:
-        styles_line = styles_line[0:-1] + style_marks[2]
-    lines.append( styles_line )
+    if( lines[-1][-1] == ","):
+        lines[-1] = lines[-1][:-1] + " "
+    
+    lines[-1] = lines[-1] + "]\n"
 
     lines_unified_str = ""
 
@@ -198,7 +186,7 @@ def clothe_to_str( clothe, index_str ):
 
     return lines_unified_str
 
-def data_update( path, clothe_list ):
+def upadate_clothes( path, clothe_list ):
 
     file_str = ""
 
@@ -210,3 +198,137 @@ def data_update( path, clothe_list ):
     file.write( file_str )
 
     file.close()
+
+def read_styles( path, clothes_list ):
+    styles_list = []
+
+    file = open( path, "r" )
+
+    file_lines = file.readlines()
+    styles_begin_lines = line_search( file_lines, "[Style_" )
+
+    for styles_atts_index in styles_begin_lines:
+        style_raw = split_atts( file_lines[styles_atts_index+1:styles_atts_index+4] )
+        style_raw_types = style_raw[0]
+        style_raw_atts = style_raw[1]
+
+        if( verify_style_types( style_raw_types ) == True ):
+            for att in range( len( style_raw_atts ) ):
+                style_raw_atts[att] = break_line_corrector( style_raw_atts[att] )
+            
+            name = style_raw_atts[0]
+            count = int( style_raw_atts[1] )
+
+            clothe_sets_str = first_read( style_raw_atts[2] )
+            clothe_sets_int = matrix_str_to_matrix_int( clothe_sets_str ) 
+            clothe_sets = set_id_to_set_clothe( clothe_sets_int, clothes_list )
+
+            style = new_style( name, clothe_sets, count )["content"]
+            styles_list.append( style )
+
+    file.close()
+
+    return styles_list
+
+def update_style( styles_list, path ):
+    file_str= ""
+    count = 0
+
+    for style in styles_list:
+        file_str = file_str + style_to_str( style, count ) 
+        count = count + 1
+
+    file = open( path, "w" )
+    file.write( file_str )
+    file.close()
+
+def style_to_str( style, counter ):
+    style_init = "[Style_" + str( counter ) + "]\n"
+    name = "name = " + style["name"] + "\n"
+    count = "count = " + str( style["count"] ) + "\n"
+    clothes_sets = "clothes_sets = ["
+
+    for set in style["clothes_sets"]:
+        if ( set["is_valid"] == True ): 
+            clothes_sets = clothes_sets + "["
+
+            for id in set["content"]:
+                clothes_sets = clothes_sets + str( id ) + ','
+
+            clothes_sets = clothes_sets[:-1] + "]"
+
+    clothes_sets = clothes_sets + "]\n\n"
+
+    final_str = style_init + name + count + clothes_sets
+
+    return final_str
+
+def set_id_to_set_clothe( matrix_id, clothes_list ):
+    matrix_clothe = []
+
+    for list_id in matrix_id:
+        line = []
+
+        for id_index in list_id:
+            line.append( clothes_list[id_index-1] )
+        
+        matrix_clothe.append( line )
+
+    return matrix_clothe
+
+def matrix_str_to_matrix_int( matrix_str ):
+    matrix_int  = []
+
+    for list in matrix_str:
+        line = []
+
+        for element in list:
+            line.append( int( element ) )
+
+        matrix_int.append( line )
+    
+    return matrix_int
+
+def break_line_corrector( line_str ):
+    if( line_str[-1:] == '\n' ):
+        return line_str[:-1]
+    else:
+        return line_str
+
+def verify_style_types( types_str ):
+    if( types_str[0] == 'name'
+    and types_str[1] == 'count'
+    and types_str[2] == 'clothes_sets' ):
+        return True
+    else:
+        return False
+
+def first_read( string ):
+    array = []
+    pause = 0
+
+    for char in range( 1, len( string ) ):
+        if( pause > 0 ):
+            pause = pause - 1
+        elif( string[char] == '[' ):
+            pause = second_read( string[char+1:] )
+            
+            array.append( string[char+1:char+pause+1].split(',') )
+    return array
+
+def second_read( str_list_part ):
+    count = 0
+    char = str_list_part[0]
+
+    while( char != ']' or count == len( str_list_part ) ):
+        count = count + 1
+        char = str_list_part[count]
+
+    return count
+
+
+# clothes_list = read_clothes( "clothes_data.txt" )
+# styles_list = read_styles( "styles_data.txt", clothes_list )
+
+# update_style( styles_list, "styles_data.txt" )
+# upadate_clothes( "clothes_data.txt", clothes_list )
