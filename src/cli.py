@@ -406,8 +406,8 @@ def update_clothes(clothes, styles):
             clth = select_clth(clothes)
             if clth is None:
                 continue
+            styles, clothes = style.remove_clth(clth, styles, clothes)
             clothes.remove(clth)
-            styles = style.remove_clth(clth, styles)
             print(f"Clothing {clth['id']} was removed!")
         # back
         elif selected_opt == 'b':
@@ -485,8 +485,8 @@ def update_sold(clothes, sold_clothes, styles):
             for_sale = clothing.filter('status', 'sale', clothes)
             print_clothes(for_sale)
             clth = select_clth(for_sale)
+            styles, clothes = style.remove_clth(clth, styles, clothes)
             clothes, sold_clothes = sell_clth(clth , clothes, sold_clothes)
-            styles = style.remove_clth(clth, styles)
         elif selected_opt == 's':
             clth_style, index = select_style(styles, index=True)
             if clth_style is None:
@@ -506,9 +506,9 @@ def update_sold(clothes, sold_clothes, styles):
             clth = select_clth(for_sale)
             if clth is None:
                 continue
+            styles, clothes = style.remove_clth(clth, styles, clothes)
             clothes, sold_clothes = sell_clth(clth, clothes, sold_clothes)
             styles[index]['count'] += 1
-            styles = style.remove_clth(clth, styles)
         elif selected_opt == 'b':
             break
     return clothes, sold_clothes, styles
@@ -533,8 +533,8 @@ def update_donated(clothes, donated_clths, styles):
             for_donation = clothing.filter('status', 'donation', clothes)
             print_clothes(for_donation)
             clth = select_clth(for_donation)
+            styles, clothes = style.remove_clth(clth, styles, clothes)
             clothes, donated_clths = donate_clth(clth, clothes, donated_clths)
-            styles = style.remove_clth(clth, styles)
         elif selected_opt == 's':
             clth_style, index = select_style(styles, index=True)
             if clth_style is None:
@@ -554,9 +554,9 @@ def update_donated(clothes, donated_clths, styles):
             clth = select_clth(for_donation)
             if clth is None:
                 continue
+            styles, clothes = style.remove_clth(clth, styles, clothes)
             clothes, donated_clths = donate_clth(clth, clothes, donated_clths)
             styles[index]['count'] += 1
-            styles = style.remove_clth(clth, styles)
         elif selected_opt == 'b':
             break
     return clothes, donated_clths, styles

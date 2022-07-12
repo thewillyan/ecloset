@@ -123,16 +123,22 @@ def get_styles(clth, styles):
                 break
     return result
 
-# retuns a style where all clothing sets where 'clth' appears are removed
-def remove_clth(clth, styles):
+# returns a style where all clothing sets where 'clth' appears are removed
+# also returns a clothes list, because the style is removed from the
+# clothes that are in the same clothing set as 'clth'.
+def remove_clth(clth, styles, clothes):
     for i in range( len(styles) ):
         style = styles[i]
         new_clth_sets = style['clothes_sets'].copy()
         for clth_set in style['clothes_sets']:
             if clth['id'] in clth_set:
+                outfit = to_clothes(clth_set, clothes)
+                for element in outfit:
+                    index = clothes.index(element)
+                    clothes[index]['styles'].remove(style['name'])
                 new_clth_sets.remove(clth_set)
         styles[i]['clothes_sets'] = new_clth_sets
-    return styles
+    return styles, clothes
 
 # returns a renamed style and a clothes list with the style renamed
 def rename(style, new_name, clothes):

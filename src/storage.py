@@ -438,7 +438,7 @@ def read_sell( path ):
         sell_types_raw = sell_raw[0]
         sell_atts_raw = sell_raw[1]
 
-        print( sell_types_raw  )
+        # print( sell_types_raw  )
 
         if( sell_atts_check( sell_types_raw ) == True ):    
             sell = raw_sell_lapidate( sell_atts_raw )
