@@ -144,8 +144,14 @@ def check_styles(value):
     return { 'is_valid': is_valid_value, 'err': err_msg }
 
 # return a new valid clothing id
-def request_id(clothes_list):
-    return len(clothes_list) + 1
+def request_id(clothes):
+    free_id = 1
+    while(True):
+        same_id = filter('id', free_id, clothes)
+        if len(same_id) == 0:
+            break
+        free_id += 1
+    return free_id
 
 # returns list of clothes where the 'field' matches the 'value'
 def filter(field, value, clothes):

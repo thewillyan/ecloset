@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 from clothing import new_clothing, new_donated_clth, new_sold_clth
 from style import check_clothes_set, new_style
+=======
+from clothing import new_clothing
+from style import check_clothes_set, new_style, to_clothes
+>>>>>>> 5317a749626f1fd2d3d3564af7cb33714f7cf5e9
 
 def remove_spaces( string ):
     string_size = len( string )
@@ -225,29 +230,31 @@ def read_styles( path, clothes_list ):
 
     return styles_list
 
-def update_style( styles_list, path ):
+def update_style( styles_list, path, clothes ):
     file_str= ""
     count = 0
 
     for style in styles_list:
-        file_str = file_str + style_to_str( style, count ) 
+        file_str = file_str + style_to_str( style, count, clothes)
         count = count + 1
 
     file = open( path, "w" )
     file.write( file_str )
     file.close()
 
-def style_to_str( style, counter ):
+def style_to_str( style, counter, clothes):
     style_init = "[Style_" + str( counter ) + "]\n"
     name = "name = " + style["name"] + "\n"
     count = "count = " + str( style["count"] ) + "\n"
     clothes_sets = "clothes_sets = ["
 
     for set in style["clothes_sets"]:
-        if ( set["is_valid"] == True ): 
+        clths_set = to_clothes(set, clothes)
+        check_result = check_clothes_set(clths_set)
+        if ( check_result["is_valid"] == True ):
             clothes_sets = clothes_sets + "["
 
-            for id in set["content"]:
+            for id in set:
                 clothes_sets = clothes_sets + str( id ) + ','
 
             clothes_sets = clothes_sets[:-1] + "]"

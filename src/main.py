@@ -94,8 +94,8 @@ while(True):
     # quit
     elif selected_opt == 'q':
         # save changes to file
-        storage.update_style( styles, "styles_data.txt" )
         storage.upadate_clothes( "clothes_data.txt", clothes )
+        storage.update_style( styles, "styles_data.txt", clothes )
         break
 
 print('')
