@@ -156,14 +156,9 @@ def clothe_to_str( clothe, index_str ):
     lines.append( "color = " + '"' + clothe["color"] + '"\n' )
 
     date = clothe["purchase_date"]
-
-    for x in range( 0,2 ):
-        if( date[x] < 10 ):
-            day = "0" + str( date[x] )
-        else: 
-            month = str( date[x] )
-
-    year = str( date[2] )
+    day = f"{date[0]:02d}"
+    month = f"{date[1]:02d}"
+    year = f"{date[2]:04d}"
 
     lines.append( "purchase_date = " + '"' + day + "/" + month + "/" + year + '"\n' )
 
