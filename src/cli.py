@@ -467,9 +467,10 @@ def update_styles(styles = [], clothes = []):
 
 # sell 'clth' based on user input, returns the clothes and sold list
 def sell_clth(clth, clothes, sold_clothes):
+    clth_id = clothing.request_id(sold_clothes)
     sold_date = read_date("Date of sale.")
     buyer = read_not_empty("Enter the buyer name", 'name')
-    sold_clth = clothing.sell(clth, sold_date, buyer)
+    sold_clth = clothing.sell(clth, clth_id, sold_date, buyer)
     sold_clothes.append(sold_clth)
     clothes.remove(clth)
     print(f"Clothing {clth['id']} was successfully selled!")
@@ -515,9 +516,10 @@ def update_sold(clothes, sold_clothes, styles):
 
 # sell 'clth' based on user input, returns the clothes and sold list
 def donate_clth(clth, clothes, donated_clothes):
+    clth_id = clothing.request_id(donated_clothes)
     donation_date = read_date("Date of donation.")
     agent = read_not_empty("Enter the donation target", 'target')
-    donated_clth = clothing.donate(clth, donation_date, agent)
+    donated_clth = clothing.donate(clth, clth_id, donation_date, agent)
     donated_clothes.append(donated_clth)
     clothes.remove(clth)
     print(f"Clothing {clth['id']} was successfully donated!")

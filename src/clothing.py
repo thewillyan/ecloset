@@ -241,8 +241,8 @@ def new_sold_clth(
     return result
 
 # transform 'clth' in a sold clothing, returns a sold clothing
-def sell(clth, sold_date, buyer):
-    result = new_sold_clth( clth['id'], clth['type'], clth['sex'], clth['size'],
+def sell(clth, clth_id, sold_date, buyer):
+    result = new_sold_clth( clth_id, clth['type'], clth['sex'], clth['size'],
                             clth['color'], sold_date, clth['price'], buyer )
     if clth['status'] != 'sale':
         raise Exception("Can't sell a clothing that is not for sale")
@@ -277,8 +277,8 @@ def new_donated_clth(
     return result
 
 # transform 'clth' in a donated clothing, returns a donated clothing
-def donate(clth, donation_date, agent):
-    result = new_donated_clth( clth['id'], clth['type'], clth['sex'], clth['size'],
+def donate(clth, clth_id, donation_date, agent):
+    result = new_donated_clth( clth_id, clth['type'], clth['sex'], clth['size'],
                             clth['color'], donation_date, agent )
     if clth['status'] != 'donation':
         raise Exception("Can't donate a clothing that is not for donation")
