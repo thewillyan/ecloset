@@ -1,6 +1,7 @@
 from clothing import new_clothing, new_donated_clth, new_sold_clth
 from style import check_clothes_set, new_style, to_clothes
 
+#remove spaces from a string
 def remove_spaces( string ):
     string_size = len( string )
 
@@ -17,6 +18,8 @@ def remove_spaces( string ):
     else:
         return ""
 
+# detects which lines of the file are started by 
+# the coder and returns their respective index's
 def line_search( file_lines, coder ):
     mark_list = []
 
@@ -26,11 +29,12 @@ def line_search( file_lines, coder ):
 
     return mark_list
 
-def split_atts( clothe_usual_lines ):
+#removes spaces from a list of lines and breaks them at "="
+def split_atts( usual_lines ):
     types_list = []
     raw_values_list = []
 
-    for line in clothe_usual_lines:
+    for line in usual_lines:
         line_without_space = remove_spaces( line )
         splited_line = line_without_space.split('=')
 
@@ -39,6 +43,7 @@ def split_atts( clothe_usual_lines ):
 
     return [ types_list, raw_values_list ]
     
+#Creat and return a clothe using clothe_raw_atts
 def raw_clothe_lapidate( clothe_raw_atts ):
     id = id_raw_lapidate( clothe_raw_atts[0] )
     type = type_raw_lapidate( clothe_raw_atts[1] )
@@ -55,13 +60,13 @@ def raw_clothe_lapidate( clothe_raw_atts ):
         purchase_date, status, price
     )
 
-
     if( clothe_result["is_valid"] == True ):
         clothe_result["content"]["styles"] = styles
         return clothe_result["content"]
     else:
         return False
 
+#attribute treatments begin
 def id_raw_lapidate( id_str ):
     return int( id_str )
 
@@ -103,7 +108,9 @@ def styles_raw_lapidate( styles_str ):
 
     return styles_list
 
+#attribute treatments end
 
+#attributes check
 def atts_check( clothe_atts_raw ):
     if( clothe_atts_raw[0] == "id"
     and clothe_atts_raw[1] == "type"
@@ -118,6 +125,7 @@ def atts_check( clothe_atts_raw ):
     else:
         return False
 
+#reads a list of clothes from a specific path and returns it
 def read_clothes( path ):
     file = open( path, "r" )
 
@@ -145,6 +153,7 @@ def read_clothes( path ):
 
     return clothe_list
 
+#turns an outfit into a single string
 def clothe_to_str( clothe, index_str ):
     lines = []
 
@@ -181,6 +190,7 @@ def clothe_to_str( clothe, index_str ):
 
     return lines_unified_str
 
+#updates the file based on a list of clothes
 def upadate_clothes( path, clothe_list ):
 
     file_str = ""
@@ -194,6 +204,7 @@ def upadate_clothes( path, clothe_list ):
 
     file.close()
 
+#reads a list of styles from a specific path and returns it
 def read_styles( path, clothes_list ):
     styles_list = []
 
@@ -225,6 +236,7 @@ def read_styles( path, clothes_list ):
 
     return styles_list
 
+#updates the file based on a list of styles
 def update_style( styles_list, path, clothes ):
     file_str= ""
     count = 0
@@ -237,6 +249,7 @@ def update_style( styles_list, path, clothes ):
     file.write( file_str )
     file.close()
 
+#turns an style into a single string
 def style_to_str( style, counter, clothes):
     style_init = "[Style_" + str( counter ) + "]\n"
     name = "name = " + style["name"] + "\n"
@@ -260,6 +273,7 @@ def style_to_str( style, counter, clothes):
 
     return final_str
 
+#transform a set of ids into a transform a set of clothes( dictionaries )
 def set_id_to_set_clothe( matrix_id, clothes_list ):
     matrix_clothe = []
 
@@ -273,6 +287,7 @@ def set_id_to_set_clothe( matrix_id, clothes_list ):
 
     return matrix_clothe
 
+#transforms an array of strings into an array of integers
 def matrix_str_to_matrix_int( matrix_str ):
     matrix_int  = []
 
@@ -286,12 +301,14 @@ def matrix_str_to_matrix_int( matrix_str ):
     
     return matrix_int
 
+#remove the line breaker "\n" if it is present in the string
 def break_line_corrector( line_str ):
     if( line_str[-1:] == '\n' ):
         return line_str[:-1]
     else:
         return line_str
 
+#check the style types
 def verify_style_types( types_str ):
     if( types_str[0] == 'name'
     and types_str[1] == 'count'
@@ -300,6 +317,7 @@ def verify_style_types( types_str ):
     else:
         return False
 
+#Transforms a string into a list with the help of the second_read function
 def first_read( string ):
     array = []
     pause = 0
@@ -313,6 +331,7 @@ def first_read( string ):
             array.append( string[char+1:char+pause+1].split(',') )
     return array
 
+#Helps first_read function transform a string into a list
 def second_read( str_list_part ):
     count = 0
     char = str_list_part[0]
@@ -323,6 +342,7 @@ def second_read( str_list_part ):
 
     return count
 
+#reads a list of donations from a specific path and returns it
 def read_donations( path ):
     file = open( path, "r" )
 
@@ -351,6 +371,7 @@ def read_donations( path ):
 
     return donated_list
 
+#Creat and return a donation clothe using clothe_raw_atts
 def raw_donation_lapidate( clothe_raw_atts ):
     id = id_raw_lapidate( clothe_raw_atts[0] )
     type = type_raw_lapidate( clothe_raw_atts[1] )
@@ -370,6 +391,7 @@ def raw_donation_lapidate( clothe_raw_atts ):
     else:
         return False
 
+#attributes check
 def donation_atts_check( donation_atts_raw ):
     if( donation_atts_raw[0] == "id"
     and donation_atts_raw[1] == "type"
@@ -383,6 +405,7 @@ def donation_atts_check( donation_atts_raw ):
     else:
         return False
 
+#updates the file based on a list of donations_clothes
 def upadate_donation( path, clothe_list ):
 
     file_str = ""
@@ -396,6 +419,7 @@ def upadate_donation( path, clothe_list ):
 
     file.close()
 
+#Transform danation_clothe to a string
 def donation_to_str( donation, index_str ):
     lines = []
 
@@ -423,6 +447,7 @@ def donation_to_str( donation, index_str ):
 
     return lines_unified_str
 
+#Read list_of_styles using a path
 def read_sell( path ):
     file = open( path, "r" )
 
@@ -451,6 +476,7 @@ def read_sell( path ):
 
     return sold_list
 
+#Creat a sold_clothe using sell_raw_atts
 def raw_sell_lapidate( sell_raw_atts ):
     id = id_raw_lapidate( sell_raw_atts[0] )
     type = type_raw_lapidate( sell_raw_atts[1] )
@@ -471,6 +497,7 @@ def raw_sell_lapidate( sell_raw_atts ):
     else:
         return False
 
+#checks if sell_atts_raw and returns if this check was true
 def sell_atts_check( sell_atts_raw ):
     if( sell_atts_raw[0] == "id"
     and sell_atts_raw[1] == "type"
@@ -485,6 +512,7 @@ def sell_atts_check( sell_atts_raw ):
     else:
         return False
 
+#updates the file based on a list of sell_clothes
 def upadate_sell( path, clothe_list ):
 
     file_str = ""
@@ -498,6 +526,7 @@ def upadate_sell( path, clothe_list ):
 
     file.close()
 
+#Transform sold_clothe to a string
 def sell_to_str( sell, index_str ):
     lines = []
 
