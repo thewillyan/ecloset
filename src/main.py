@@ -12,8 +12,7 @@ SOLD_DIR = join(PATH, 'sold_data.txt')
 DONATED_DIR = join(PATH, 'donated_data.txt')
 
 # if dont exists, create data files
-data_files = [ CLOTHES_DIR, STYLES_DIR, SOLD_DIR,
-              DONATED_DIR ]
+data_files = [ CLOTHES_DIR, STYLES_DIR, SOLD_DIR, DONATED_DIR ]
 for file_dir in data_files:
     open(file_dir, "a+")
 
@@ -109,11 +108,12 @@ while(True):
         storage.upadate_sell( SOLD_DIR, sold_clothes )
         break
 
-print('')
-print('stored clothes:', clothes)
-print('')
-print('sold clothes:', sold_clothes)
-print('')
-print('donated clothes:', donated_clothes)
-print('')
-print('stored styles:', styles)
+# DEBUG INFO
+# print('')
+# print('stored clothes:', clothes)
+# print('')
+# print('sold clothes:', sold_clothes)
+# print('')
+# print('donated clothes:', donated_clothes)
+# print('')
+# print('stored styles:', styles)

@@ -492,12 +492,11 @@ def update_sold(clothes, sold_clothes, styles):
             clth_style, index = select_style(styles, index=True)
             if clth_style is None:
                 continue
-            print_clth_sets(clth_style['clothes_sets'], clothes)
+            clth_sets = clth_style['clothes_sets']
+            print_clth_sets(clth_sets, clothes)
             confirm = confirm_menu()
             if confirm == 'n':
                 continue
-            clth_sets = clth_style['clothes_sets']
-            print_clth_sets(clth_sets, clothes)
             clth_set = select_clth_set(clth_sets)
             if clth_set is None:
                 continue
@@ -541,12 +540,11 @@ def update_donated(clothes, donated_clths, styles):
             clth_style, index = select_style(styles, index=True)
             if clth_style is None:
                 continue
-            print_clth_sets(clth_style['clothes_sets'], clothes)
+            clth_sets = clth_style['clothes_sets']
+            print_clth_sets(clth_sets, clothes)
             confirm = confirm_menu()
             if confirm == 'n':
                 continue
-            clth_sets = clth_style['clothes_sets']
-            print_clth_sets(clth_sets, clothes)
             clth_set = select_clth_set(clth_sets)
             if clth_set is None:
                 continue
