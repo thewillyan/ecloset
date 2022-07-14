@@ -30,7 +30,7 @@ def clothing_menu():
 # asks the user to select a changeable field from 'clth'
 def clothing_fields_menu(clth):
     clothing_fields_options = {
-        't': 'type',
+        # 't': 'type',
         'x': 'sex',
         's': 'size',
         'c': 'color',
@@ -365,9 +365,11 @@ def select_clth_set(clth_sets):
 # changed clothing
 def update_clothing(clth, clothes):
     field = clothing_fields_menu(clth)
-    if field == 't':
-        clth['type'] = read_clth_type()
-    elif field == 'x':
+    # temporarily disables type changing because it causes
+    # conflicts with the style.
+    # if field == 't':
+        # clth['type'] = read_clth_type()
+    if field == 'x':
         clth['sex'] = read_clth_sex()
     elif field == 's':
         clth['size'] = read_clth_size()
